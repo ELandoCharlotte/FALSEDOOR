@@ -10,6 +10,38 @@
 
 ---
 
+## ⚡ Quick Cheatsheet / Rujukan Pantas
+
+### 🟢 1. Start Everything (Mula Semua)
+```bash
+# 1-Click:
+./start_all_services.sh
+
+# Or Manual Commands:
+sudo systemctl start ssh            # Port 2022 (Admin SSH)
+sudo systemctl start cowrie         # Port 2222 (Cowrie Honeypot)
+sudo systemctl start falsedoor-web  # Port 8000 (FastAPI SOC Web UI)
+```
+📍 **Web Dashboard:** `http://<IP-Raspberry-Pi>:8000`
+
+---
+
+### 🛑 2. Safe Shutdown (Tutup & Elak Kernel Panic)
+```bash
+# 1-Click:
+./safe_shutdown.sh
+
+# Or Manual Commands:
+sudo systemctl stop falsedoor-web cowrie
+sync
+sudo shutdown -h now
+```
+> ⚠️ **PENTING / CRITICAL:**  
+> Tunggu lampu hijau (**ACT LED**) di board Raspberry Pi **berhenti berkelip & padam sepenuhnya** (~15 saat).  
+> Bila tinggal lampu merah sahaja, **baru cabut plug power!** (Ini gerenti 100% tiada kernel panic).
+
+---
+
 ## 🏛️ System Architecture
 
 ```
@@ -92,99 +124,20 @@ FALSEDOOR/
 │   └── static/
 │       └── index.html            # Production responsive dashboard
 ├── falsedoor_dashboard_preview.html # Standalone offline preview
+├── start_all_services.sh         # 1-Click start script
+├── safe_shutdown.sh              # 1-Click safe shutdown script
 └── UBUNTU_SERVER_DEPLOYMENT.md   # Complete server deployment guide
 ```
 
 ---
 
-## ⚡ Quick Start
-
-### 1. Offline Local Preview
-You can preview the entire dashboard locally on any web browser without starting a server:
-- Open [`falsedoor_dashboard_preview.html`](./falsedoor_dashboard_preview.html) directly in your browser.
-
-### 2. Running Locally (FastAPI)
-```bash
-# Clone the repository
-git clone https://github.com/ELandoCharlotte/FALSEDOOR.git
-cd FALSEDOOR
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-
-# Install dependencies
-pip install -r server/requirements.txt
-
-# Run the backend
-python server/main.py
-```
-Visit `http://localhost:8000` to access the SOC Dashboard.
-
----
-
-## ⚙️ Service Operations (Raspberry Pi / Ubuntu)
-
-### 🟢 1. Services You Need to Start
-
-To run the complete FALSEDOOR ecosystem, ensure the following three core services are active:
-
-| Service | Port | Description | Start Command |
-|---|---|---|---|
-| **Admin SSH** | `2022` | Real administrative access to the machine | `sudo systemctl start ssh` |
-| **Cowrie Honeypot** | `2222` | Fake SSH decoy capturing attacker telemetry | `sudo systemctl start cowrie` |
-| **FALSEDOOR SOC Web UI** | `8000` | FastAPI telemetry, ML classification & Web UI | `sudo systemctl start falsedoor-web` |
-
-#### One-Click Start Script:
-```bash
-chmod +x start_all_services.sh
-./start_all_services.sh
-```
-
----
-
-## 🛑 How to Safely Stop & Prevent Raspberry Pi Kernel Panics
-
-> [!WARNING]
-> **Why Kernel Panic Happens on Raspberry Pi:**
-> MicroSD cards use flash memory managed by ext4 journal filesystems. If power is unplugged or the system is abruptly reset while Cowrie (`cowrie.json`) or FastAPI is actively writing, uncommitted RAM buffers corrupt the filesystem superblock. On subsequent boot, the Linux kernel cannot mount the root filesystem, triggering a fatal **Kernel Panic** (`Kernel panic - not syncing: VFS: Unable to mount root fs`).
-
-### 🛡️ Safe 4-Step Shutdown Procedure:
-
-Execute these commands before turning off power:
-
-```bash
-# Step 1: Gracefully stop honeypot and telemetry web services
-sudo systemctl stop falsedoor-web cowrie 2>/dev/null || true
-
-# Step 2: Terminate lingering Python/Cowrie background workers
-sudo pkill -u $USER -f "cowrie|uvicorn|main.py" 2>/dev/null || true
-
-# Step 3: Flush all uncommitted write buffers from RAM to the MicroSD card
-sync && sync && sync
-
-# Step 4: Issue safe system poweroff
-sudo shutdown -h now
-```
-
-> [!IMPORTANT]
-> **Before pulling the power cable:**
-> Watch the green/yellow **ACT LED** on the Raspberry Pi board. **Wait 10–15 seconds** until the green flashing light stops completely and remains OFF (or solid red power LED only). Never disconnect the power cable while the green activity light is flickering!
-
-#### One-Click Safe Shutdown Script:
-```bash
-chmod +x safe_shutdown.sh
-./safe_shutdown.sh
-```
-
----
-
-## 📜 Deployment on Ubuntu Server
-Refer to [`UBUNTU_SERVER_DEPLOYMENT.md`](./UBUNTU_SERVER_DEPLOYMENT.md) for full systemd service setup, firewall configuration (`ufw`), and Cowrie honeypot routing.
+## 📜 Full Server Deployment Guide
+For complete step-by-step setup (Nginx reverse proxy, UFW firewall rules, and systemd daemon configurations), refer to [`UBUNTU_SERVER_DEPLOYMENT.md`](./UBUNTU_SERVER_DEPLOYMENT.md).
 
 ---
 
 ## 🎓 Academic FYP Project
-Developed for Universiti Teknologi MARA (UiTM) Final Year Project (FYP).
+Developed for Universiti Teknologi MARA (UiTM) Final Year Project (FYP).  
 Author: **ELandoCharlotte**
+
 
