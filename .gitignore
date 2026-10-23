@@ -23,6 +23,8 @@ FALSEDOOR/cowrie-env/
 
 # Large Archives & Packages (>100MB exceeds GitHub limit)
 *.zip
+!FALSEDOOR_UBUNTU_DEPLOY.zip
+!netlify_deploy.zip
 *.tar.gz
 *.tgz
 *.rar
