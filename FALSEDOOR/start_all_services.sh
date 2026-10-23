@@ -1,41 +1,26 @@
 #!/bin/bash
 # ==============================================================================
-# FALSEDOOR: Start All Services Script
+# FALSEDOOR: Start All Services on Ubuntu Server / Raspberry Pi
 # ==============================================================================
-set -e
 
-echo "🚀 [1/3] Verifying Admin SSH Service..."
-sudo systemctl start ssh || sudo service ssh start
-echo "   ✅ Admin SSH active."
-
-echo "🍯 [2/3] Starting Cowrie Honeypot Decoy (Port 2222)..."
-if systemctl list-unit-files | grep -q cowrie.service; then
-    sudo systemctl start cowrie
+echo "🚀 [1/2] Starting Cowrie Honeypot (Port 2222)..."
+if command -v cowrie &> /dev/null; then
+    cowrie start
+elif [ -f ~/FALSEDOOR/bin/cowrie ]; then
+    ~/FALSEDOOR/bin/cowrie start
+elif [ -f ~/cowrie/bin/cowrie ]; then
+    ~/cowrie/bin/cowrie start
 else
-    # Fallback to manual startup if not configured as systemd service
-    cd ~/FALSEDOOR
-    if [ -f "bin/cowrie" ]; then
-        bin/cowrie start || true
-    fi
+    echo "⚠️  cowrie command not found in PATH, trying cowrie-env..."
+    source ~/FALSEDOOR/cowrie-env/bin/activate 2>/dev/null || source ~/cowrie-env/bin/activate 2>/dev/null || true
+    cowrie start || true
 fi
-echo "   ✅ Cowrie Honeypot started."
 
-echo "📊 [3/3] Starting FALSEDOOR FastAPI Telemetry & SOC Dashboard (Port 8000)..."
-if systemctl list-unit-files | grep -q falsedoor-web.service; then
-    sudo systemctl restart falsedoor-web
-elif systemctl list-unit-files | grep -q falsedoor-api.service; then
-    sudo systemctl restart falsedoor-api
-else
-    # Fallback manual startup in background
-    cd ~/FALSEDOOR/server
-    nohup ./start_server.sh > ~/FALSEDOOR/server.log 2>&1 &
-fi
-echo "   ✅ FALSEDOOR Web SOC Dashboard active on http://localhost:8000"
+echo "📊 [2/2] Starting FALSEDOOR Web Dashboard (Port 8000)..."
+cd ~/FALSEDOOR/server
+nohup python3 main.py > ~/FALSEDOOR/server.log 2>&1 &
 
 echo ""
-echo "=============================================================================="
-echo "🎯 ALL FALSEDOOR SERVICES ARE OPERATIONAL:"
-echo "   - Admin SSH:       Port 2022"
-echo "   - Cowrie Decoy:    Port 2222"
-echo "   - SOC Web UI:      Port 8000 (http://<ip>:8000)"
-echo "=============================================================================="
+echo "✅ All services started successfully!"
+echo "   - Cowrie Honeypot: Port 2222"
+echo "   - SOC Web UI:      Port 8000 (http://$(hostname -I | awk '{print $1}'):8000)"

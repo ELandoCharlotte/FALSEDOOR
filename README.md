@@ -10,35 +10,45 @@
 
 ---
 
-## ⚡ Quick Cheatsheet / Rujukan Pantas
+## ⚡ Quick Cheatsheet / Rujukan Pantas (Ubuntu Server / Raspberry Pi)
 
-### 🟢 1. Start Everything (Mula Semua)
+### 🟢 1. Start Everything (Mula Semua di Terminal Ubuntu)
 ```bash
-# 1-Click:
-./start_all_services.sh
+# 1. Start Honeypot Cowrie:
+cowrie start
 
-# Or Manual Commands:
-sudo systemctl start ssh            # Port 2022 (Admin SSH)
-sudo systemctl start cowrie         # Port 2222 (Cowrie Honeypot)
-sudo systemctl start falsedoor-web  # Port 8000 (FastAPI SOC Web UI)
+# 2. Start Web Dashboard FALSEDOOR:
+cd ~/FALSEDOOR/server && python3 main.py &
 ```
-📍 **Web Dashboard:** `http://<IP-Raspberry-Pi>:8000`
+📍 **Buka Web di Browser Phone/Laptop:** `http://<IP-Raspberry-Pi>:8000`
 
 ---
 
-### 🛑 2. Safe Shutdown (Tutup & Elak Kernel Panic)
+### 🛑 2. Stop & Safe Shutdown (Tutup Semua & Elak Kernel Panic)
 ```bash
-# 1-Click:
-./safe_shutdown.sh
+# 1. Stop Honeypot:
+cowrie stop
 
-# Or Manual Commands:
-sudo systemctl stop falsedoor-web cowrie
+# 2. Stop Web Server:
+pkill -f main.py
+
+# 3. Save memory cache ke MicroSD:
 sync
+
+# 4. Shutdown Raspberry Pi:
 sudo shutdown -h now
 ```
-> ⚠️ **PENTING / CRITICAL:**  
-> Tunggu lampu hijau (**ACT LED**) di board Raspberry Pi **berhenti berkelip & padam sepenuhnya** (~15 saat).  
-> Bila tinggal lampu merah sahaja, **baru cabut plug power!** (Ini gerenti 100% tiada kernel panic).
+> ⚠️ **PENTING (Elak 100% Kernel Panic):**  
+> Lepas type `sudo shutdown -h now`, **tengok lampu hijau (ACT LED)** di Raspberry Pi.  
+> **Tunggu 10–15 saat sampai lampu hijau padam terus** (hanya lampu merah menyala).  
+> **Lepas lampu hijau padam, baru cabut plug power!**
+
+---
+
+### 💡 Nota Tambahan:
+Jika mahu 1-click script terus:
+- Mula semua: `./start_all_services.sh`
+- Tutup semua & shutdown: `./safe_shutdown.sh`
 
 ---
 
