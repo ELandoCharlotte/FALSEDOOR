@@ -1,0 +1,18 @@
+{
+  "name": "FALSEDOOR Cybersecurity SOC",
+  "short_name": "FALSEDOOR",
+  "description": "Intelligent Raspberry Pi-Based Real-Time Cybersecurity Platform with Machine Learning for Honeypot Attack Classification and Monitoring",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

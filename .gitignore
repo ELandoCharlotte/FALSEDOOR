@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.backup
+
+# Security & Private Keys (never commit SSH private keys!)
+*ssh_host_*
+*.key
+*.pem
+
+# Honeypot Variable runtime data & logs
+var/
+FALSEDOOR/var/
+*.log
+
+# Virtual Environments
+venv/
+env/
+ENV/
+cowrie-env/
+FALSEDOOR/cowrie-env/
+
+# Large Archives & Packages (>100MB exceeds GitHub limit)
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+FALSEDOOR_UBUNTU_PACKAGE.zip
+API Integration Dashboard.zip
+
+# Temporary SCP download directories
+FALSEDOOR@172.20.10.2/
+
+# Node / Frontend build caches
+node_modules/
+dist/
+.env.local
+.env.*.local
+
+# OS Generated
+.DS_Store
+Thumbs.db
+desktop.ini

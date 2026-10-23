@@ -1,0 +1,18 @@
+eventid,timestamps,src_ip,username,password,input,session,protocol,attack_type
+cowrie.command.input,2026-09-21T07:52:20.277580Z,192.168.50.202, , ,whoami,2731e3e819fd,ssh,Command Execution
+cowrie.command.input,2026-09-21T07:52:30.817668Z,192.168.50.202, , ,pwd,2731e3e819fd,ssh,Command Execution
+cowrie.command.input,2026-09-21T07:52:34.414978Z,192.168.50.202, , ,ls,2731e3e819fd,ssh,Command Execution
+cowrie.login.failed,2026-09-21T15:59:42.363882Z,192.168.50.202,root,123456, ,c0425a610e61,ssh,Brute Force
+cowrie.login.failed,2026-09-21T16:06:12.261500Z,192.168.50.202,root,123456, ,1b2d254903a1,ssh,Brute Force
+cowrie.command.input,2026-09-21T16:13:33.549547Z,192.168.50.202, , ,wget http://192.168.50.46:8000/test.txt,988d3d2ab38a,ssh,Malware Download Attempt
+cowrie.command.input,2026-09-21T17:27:55.502283Z,192.168.50.202, , ,wget http://192.168.50.46:8000/test.txt,a9765f555966,ssh,Malware Download Attempt
+cowrie.command.input,2026-09-21T17:28:10.850022Z,192.168.50.202, , ,wget http://192.168.50.46:8000/test.txt,a9765f555966,ssh,Malware Download Attempt
+cowrie.command.input,2026-09-21T17:28:12.435024Z,192.168.50.202, , ,wget http://192.168.50.46:8000/test.txt,a9765f555966,ssh,Malware Download Attempt
+cowrie.command.input,2026-09-21T17:55:23.881737Z,192.168.50.202, , ,"printf ""wrong123\nadmin123\npassword123\n > ~/fyp-passwords.txt",3af013c23401,ssh,Command Execution
+cowrie.command.input,2026-09-21T17:56:37.369611Z,192.168.50.202, , ,"printf ""wrong123\nadmin123\npassword123\n"" > ~/fyp-passwords.txt",3af013c23401,ssh,Command Execution
+cowrie.command.input,2026-09-21T17:57:24.403577Z,192.168.50.202, , ,hydra -l root -P ~/fyp-passwords.txt ssh://192.168.50.46:2222 -t 2,3af013c23401,ssh,Command Execution
+cowrie.command.input,2026-09-21T18:02:54.396546Z,192.168.50.202, , ,hydra -l root -P ~/fyp-passwords.txt shsh://192.168.50.46:2222 -t 2,273cf5ec0ba8,ssh,Command Execution
+cowrie.command.input,2026-09-21T18:03:03.464985Z,192.168.50.202, , ,hydra -1 root -P ~/fyp-passwords.txt shsh://192.168.50.46:2222 -t 2,273cf5ec0ba8,ssh,Command Execution
+cowrie.command.input,2026-09-21T18:03:42.727034Z,192.168.50.202, , ,hydra -1 root -P ~/fyp-passwords.txt shsh://192.168.50.46:2222 -t 4,273cf5ec0ba8,ssh,Command Execution
+cowrie.command.input,2026-09-21T18:03:49.603581Z,192.168.50.202, , ,exit,273cf5ec0ba8,ssh,Command Execution
+cowrie.login.failed,2026-09-21T18:09:14.901026Z,192.168.50.202,root,123456, ,d30382b90e7c,ssh,Brute Force
