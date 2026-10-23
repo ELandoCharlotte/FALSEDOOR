@@ -331,3 +331,53 @@ sudo systemctl restart falsedoor-api
 | `FALSEDOOR/var/log/cowrie/cowrie.json` | ⚠️ **AUTO-GENERATED** | Cowrie writes this when running |
 | React `dist/` folder | ⚠️ **REBUILD** | Run `npm run build` |
 | Nginx config | ⚠️ **RECONFIGURE** | Step 7 above |
+
+---
+
+## 🛠️ Complete Operational Guide: Starting & Stopping Services
+
+### 1. Services to Start on Boot
+```bash
+# Start Admin SSH (Port 2022)
+sudo systemctl start ssh
+
+# Start Cowrie Honeypot (Port 2222)
+sudo systemctl start cowrie
+
+# Start FastAPI SOC Dashboard (Port 8000)
+sudo systemctl start falsedoor-web
+```
+Or simply run:
+```bash
+chmod +x start_all_services.sh
+./start_all_services.sh
+```
+
+---
+
+### 2. How to Safely Stop Everything and Prevent Raspberry Pi Kernel Panics
+
+**Why does Kernel Panic happen?**
+When power is suddenly pulled, write transactions from `cowrie.json` and SQLite remain in volatile RAM. This corrupts the ext4 superblock on the MicroSD card, leading to:
+`Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(179,2)`
+
+**The Safe Shutdown Command Sequence:**
+```bash
+# 1. Stop all web and honeypot processes
+sudo systemctl stop falsedoor-web cowrie 2>/dev/null || true
+sudo pkill -u $USER -f "cowrie|uvicorn|main.py" 2>/dev/null || true
+
+# 2. Flush write caches to the MicroSD card
+sync && sync && sync
+
+# 3. Clean powerdown
+sudo shutdown -h now
+```
+**CRITICAL:** Wait 10–15 seconds until the green ACT LED light on the Raspberry Pi stops blinking completely before disconnecting the power supply!
+
+Or run:
+```bash
+chmod +x safe_shutdown.sh
+./safe_shutdown.sh
+```
+
