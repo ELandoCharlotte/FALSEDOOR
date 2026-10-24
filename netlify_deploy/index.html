@@ -185,13 +185,13 @@
     }
 
     .lock-welcome {
-      font-size: clamp(1.15rem, 2.5vh, 1.45rem);
-      font-weight: 700;
-      letter-spacing: 0.38em;
+      font-size: clamp(1.42rem, 3.2vh, 1.88rem);
+      font-weight: 800;
+      letter-spacing: 0.40em;
       color: #ffffff;
       text-transform: uppercase;
       font-family: 'Barlow Condensed', 'Inter', sans-serif;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
       margin: 0;
       line-height: 1.15;
     }
@@ -342,29 +342,32 @@
         display: none;
       }
       .lock-welcome {
-        font-size: 1.5rem;
+        font-size: 2.15rem !important;
+        letter-spacing: 0.42em;
       }
       .lock-logo-img {
-        max-width: 400px;
+        max-width: 460px;
       }
       .lock-subtitle {
-        font-size: 1.6rem;
+        font-size: 2.0rem !important;
+        letter-spacing: 0.36em;
       }
       .fingerprint-halo {
-        width: 100px;
-        height: 100px;
+        width: 108px;
+        height: 108px;
       }
       .fingerprint-btn {
-        width: 78px;
-        height: 78px;
+        width: 84px;
+        height: 84px;
       }
       .fingerprint-btn svg {
-        width: 44px;
-        height: 44px;
+        width: 46px;
+        height: 46px;
       }
       .fingerprint-text {
-        font-size: 1.5rem;
-        margin-top: 16px;
+        font-size: 1.75rem !important;
+        letter-spacing: 0.38em;
+        margin-top: 18px;
       }
     }
 
@@ -1069,7 +1072,154 @@
       .telemetry-tile { padding: 10px 8px; }
       .telemetry-title { font-size: 0.66rem; min-height: 30px; }
       .telemetry-val { font-size: 1.15rem; min-height: 24px; }
-      .telemetry-sub { font-size: 0.65rem; min-height: 28px; }
+    }
+
+    /* ══════════════════════════════════════════════════════════════════════════
+       DESKTOP VIEW REFINEMENT (HIGH CLARITY, EXPANSIVE FONTS & BOLD SOC CARDS)
+       ══════════════════════════════════════════════════════════════════════════ */
+    @media (min-width: 900px) {
+      .main-wrapper {
+        padding: 24px 36px 36px;
+      }
+      .soc-topbar {
+        min-height: 70px;
+        padding-left: 36px;
+        padding-right: 36px;
+      }
+      .soc-brand-logo {
+        height: 44px;
+      }
+      .tab-nav-btn {
+        font-size: 0.94rem;
+        padding: 9px 18px;
+        border-radius: 8px;
+      }
+      .stream-pill {
+        font-size: 0.82rem;
+        padding: 7px 16px;
+      }
+      .top-banner-center {
+        padding: 20px 24px 10px;
+      }
+      .target-pill {
+        padding: 12px 38px;
+        font-size: 1.05rem;
+        gap: 16px;
+      }
+      .target-pill strong {
+        font-size: 1.15rem !important;
+      }
+      .kpi-grid {
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+      .kpi-card {
+        padding: 20px 24px;
+        border-radius: 14px;
+      }
+      .kpi-title {
+        font-size: 0.92rem;
+        letter-spacing: 0.05em;
+      }
+      .kpi-badge {
+        font-size: 0.72rem;
+        padding: 4px 10px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .kpi-value {
+        font-size: 2.3rem;
+        margin-top: 6px;
+      }
+      .kpi-sub {
+        font-size: 0.85rem;
+        margin-top: 6px;
+      }
+      .charts-grid-2col {
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+      .soc-panel {
+        padding: 22px 26px;
+        border-radius: 14px;
+        margin-bottom: 22px;
+      }
+      .panel-header {
+        margin-bottom: 16px;
+      }
+      .panel-header h3 {
+        font-size: 1.18rem;
+      }
+      .table-soc {
+        font-size: 0.88rem;
+      }
+      .table-soc th {
+        font-size: 0.78rem;
+        padding: 12px 14px;
+      }
+      .table-soc td {
+        font-size: 0.86rem;
+        padding: 12px 14px;
+      }
+      .badge-class {
+        font-size: 0.78rem;
+        padding: 4px 10px;
+        border-radius: 5px;
+      }
+      .donut-disc {
+        width: 175px;
+        height: 175px;
+      }
+      .donut-disc::after {
+        width: 118px;
+        height: 118px;
+      }
+      .donut-center-text strong {
+        font-size: 1.75rem;
+      }
+      .donut-center-text span {
+        font-size: 0.76rem;
+      }
+      .bar-list {
+        gap: 12px;
+      }
+      .bar-item-header {
+        font-size: 0.88rem;
+        margin-bottom: 4px;
+      }
+      .bar-track {
+        height: 8px;
+      }
+      .telemetry-grid {
+        gap: 14px;
+      }
+      .telemetry-tile {
+        padding: 16px 18px;
+        border-radius: 10px;
+      }
+      .telemetry-title {
+        font-size: 0.82rem;
+        min-height: 26px;
+      }
+      .telemetry-val {
+        font-size: 1.6rem;
+        min-height: 30px;
+        margin: 6px 0;
+      }
+      .telemetry-sub {
+        font-size: 0.80rem;
+      }
+      .ml-spec-grid {
+        gap: 16px;
+      }
+      .ml-spec-card {
+        padding: 16px 18px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+      }
+      .health-grid {
+        gap: 16px;
+      }
     }
 
     /* Modal */

@@ -67,8 +67,19 @@ cd "$DIR"
 # Wait for API to initialize
 sleep 2
 
-# Start ngrok tunnel on port 8000
-ngrok http 8000 --log=stdout > /tmp/ngrok.log 2>&1 &
+# Check if a permanent static ngrok domain is configured
+STATIC_DOMAIN=""
+if [ -f "$DIR/server/ngrok_domain.txt" ]; then
+    STATIC_DOMAIN=$(cat "$DIR/server/ngrok_domain.txt" | tr -d '\r\n ')
+fi
+
+# Start ngrok tunnel on port 8000 (with static domain if provided)
+if [ -n "$STATIC_DOMAIN" ]; then
+    echo "    Using permanent static domain: $STATIC_DOMAIN"
+    ngrok http 8000 --url="$STATIC_DOMAIN" --log=stdout > /tmp/ngrok.log 2>&1 &
+else
+    ngrok http 8000 --log=stdout > /tmp/ngrok.log 2>&1 &
+fi
 NGROK_PID=$!
 
 sleep 3
