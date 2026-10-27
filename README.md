@@ -10,47 +10,48 @@
 
 ---
 
-## ⚡ Quick Cheatsheet / Rujukan Pantas (Ubuntu Server / Raspberry Pi)
+## Quick Reference Guide (Ubuntu Server / Raspberry Pi)
 
-### 🟢 1. Start Everything (Mula Semua di Terminal Ubuntu)
+### 1. Start All Services
 ```bash
-# 1. Start Honeypot Cowrie:
+# 1. Start Cowrie Honeypot:
 cowrie start
 
-# 2. Start Web Dashboard FALSEDOOR:
+# 2. Start FALSEDOOR Telemetry Engine:
 cd ~/FALSEDOOR/server && python3 main.py &
 ```
-📍 **Buka Web di Browser Phone/Laptop:** `http://<IP-Raspberry-Pi>:8000`
+Access dashboard locally: `http://<IP-Raspberry-Pi>:8000` or via domain `https://falsedoor.dev`
 
 ---
 
-### 🛑 2. Stop & Safe Shutdown (Tutup Semua & Elak Kernel Panic)
+### 2. Stop Services & Safe Shutdown
 ```bash
-# 1. Stop Honeypot:
+# 1. Stop Cowrie Honeypot:
 cowrie stop
 
 # 2. Stop Web Server:
 pkill -f main.py
 
-# 3. Save memory cache ke MicroSD:
+# 3. Flush storage write buffers:
 sync
 
-# 4. Shutdown Raspberry Pi:
+# 4. Shutdown host:
 sudo shutdown -h now
 ```
-> ⚠️ **PENTING (Elak 100% Kernel Panic):**  
-> Lepas type `sudo shutdown -h now`, **tengok lampu hijau (ACT LED)** di Raspberry Pi.  
-> **Tunggu 10–15 saat sampai lampu hijau padam terus** (hanya lampu merah menyala).  
-> **Lepas lampu hijau padam, baru cabut plug power!**
+> **Important Hardware Shutdown Procedure:**  
+> After executing `sudo shutdown -h now`, monitor the green activity LED (ACT LED) on the Raspberry Pi. Wait approximately 10 to 15 seconds until the green LED turns off completely (leaving only the solid red power LED). Disconnect the power supply only after the green LED has extinguished.
 
 ---
 
-### 💡 Nota Tambahan:
-Jika mahu 1-click script terus:
-- Mula semua: `./start_all_services.sh`
-- Tutup semua & shutdown: `./safe_shutdown.sh`
+### Automation Scripts
+For one-command execution:
+- **Start all services**: `./start.sh` (or `./start_service.sh` / `./start_all_services.sh`)
+- **Stop all services**: `./stop_services.sh` (or `./stop.sh`)
+- **Safe hardware shutdown**: `./safe_shutdown.sh`
+- **Full Guide**: See [RASPBERRY_PI_OPERATION_GUIDE.md](file:///c:/Users/ELs/Downloads/UITM/FYP/DONTDELETE/Guide/RASPBERRY_PI_OPERATION_GUIDE.md)
 
 ---
+
 
 ## 🏛️ System Architecture
 

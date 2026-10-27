@@ -1,0 +1,16 @@
+[Unit]
+Description=FALSEDOOR Honeypot Threat Intelligence API
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/FALSEDOOR/server
+ExecStart=/home/ubuntu/FALSEDOOR/server/venv/bin/python3 /home/ubuntu/FALSEDOOR/server/main.py
+Restart=always
+RestartSec=3
+StandardOutput=append:/tmp/falsedoor_api.log
+StandardError=append:/tmp/falsedoor_api.log
+
+[Install]
+WantedBy=multi-user.target

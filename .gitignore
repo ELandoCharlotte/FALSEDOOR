@@ -44,3 +44,11 @@ dist/
 .DS_Store
 Thumbs.db
 desktop.ini
+.vscode/
+
+# Temporary scratch and maintenance scripts
+scratch_*.py
+build_packages.ps1
+sync_and_rebuild.py
+cloudflare_pages_dist/
+

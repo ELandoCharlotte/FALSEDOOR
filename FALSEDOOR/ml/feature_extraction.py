@@ -21,11 +21,9 @@ with open(INPUT_FILE, "r", encoding="utf-8") as file:
         eventid = event.get("eventid", " ")
         command = event.get("input", " ")
 
-        #Brute Force
         if eventid == "cowrie.login.failed":
             attack_type = "Brute Force"
 
-        #Command Execution
         elif eventid == "cowrie.command.input":
              command_lower = command.lower()
 
@@ -55,7 +53,7 @@ df.to_csv(OUTPUT_FILE, index=False)
 
 print("Feature extraction completed!")
 print(f"Total extracted records: {len(df)}")
-print(f"Output file: (OUTPUT_FILE)")
+print(f"Output file: {OUTPUT_FILE}")
 
 if not df.empty:
    print("\nAttack type distribution:")

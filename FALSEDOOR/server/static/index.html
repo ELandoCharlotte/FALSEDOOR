@@ -1,1293 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" class="locked-state">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>FALSEDOOR | Standalone Local Preview</title>
-
-  <!-- PWA & Mobile Meta Tags (Optimized for iOS Notch & Android) -->
-  <meta name="theme-color" content="#111115" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <title>FALSEDOOR</title>
+<meta name="theme-color" content="#070709" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="FALSEDOOR" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg-core: #09090b;
-      --bg-surface: #111115;
-      --bg-card: #15151a;
-      --bg-card-hover: #1b1b22;
-      --border-subtle: #22222a;
-      --border-medium: #2e2e3a;
-      --red-bright: #ef4444;
-      --red-crimson: #dc2626;
-      --green-online: #10b981;
-      --amber-warn: #f59e0b;
-      --blue-accent: #38bdf8;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-    /* Hide Netlify Drawer / Feedback Badge / Powered by Netlify widget */
-    [data-netlify-deploy-id],
-    iframe#netlify-drawer,
-    iframe[src*="netlify"],
-    .netlify-badge,
-    #netlify-badge,
-    [class*="netlify-drawer"],
-    div[id*="netlify-feedback"] {
-      display: none !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-      opacity: 0 !important;
-      height: 0 !important;
-      width: 0 !important;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      min-height: 100%;
-      background: var(--bg-core);
-      color: var(--text-main);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      overflow-x: hidden;
-      line-height: 1.5;
-      overscroll-behavior: none;
-    }
-
-    /* Completely freeze screen when on the landing/fingerprint page */
-    html.locked-state,
-    body.locked-state {
-      overflow: hidden !important;
-      height: 100% !important;
-      height: 100vh !important;
-      height: 100dvh !important;
-      width: 100% !important;
-      position: fixed !important;
-      inset: 0 !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      touch-action: none !important;
-      overscroll-behavior: none !important;
-      -webkit-overflow-scrolling: auto !important;
-    }
-
-    code, pre, .mono {
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* ══════════════════════════════════════════════════════════════════════════
-       1. SCREEN: INDEX / FINGERPRINT LANDING PAGE (COMPLETELY STATIC & CENTERED)
-       ══════════════════════════════════════════════════════════════════════════ */
-    #lockScreen {
-      position: fixed !important;
-      inset: 0 !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      width: 100% !important;
-      width: 100vw !important;
-      height: 100% !important;
-      height: 100vh !important;
-      height: 100dvh !important;
-      max-height: 100dvh !important;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      text-align: center !important;
-      background: #000000 !important;
-      padding: clamp(8px, 1.8vh, 18px) 16px !important;
-      z-index: 999999 !important;
-      overflow: hidden !important;
-      touch-action: none !important;
-      overscroll-behavior: none !important;
-      user-select: none !important;
-      -webkit-user-select: none !important;
-      transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1), transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    #lockScreen * {
-      touch-action: none !important;
-      overscroll-behavior: none !important;
-    }
-    #lockScreen.unlocked {
-      opacity: 0 !important;
-      pointer-events: none !important;
-      transform: scale(1.04) !important;
-    }
-
-    /* Vertical Poster Flow */
-    .lock-content {
-      width: 100%;
-      max-width: 440px;
-      height: 100%;
-      max-height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      text-align: center;
-      margin: 0 auto;
-      user-select: none;
-      padding: clamp(6px, 1.2vh, 14px) 0;
-      box-sizing: border-box;
-    }
-
-    /* Top 3D Door & Complete Pit Artwork */
-    .lock-artwork {
-      width: 100%;
-      max-width: 350px;
-      max-height: clamp(160px, 30vh, 260px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      margin: 0 auto;
-      flex-shrink: 0;
-    }
-    .lock-artwork-img {
-      width: 100%;
-      max-width: 340px;
-      height: auto;
-      max-height: clamp(160px, 30vh, 260px);
-      object-fit: contain;
-      filter: drop-shadow(0 0 24px rgba(239, 68, 68, 0.35));
-      animation: doorLightGlow 3.5s infinite alternate ease-in-out;
-    }
-    @keyframes doorLightGlow {
-      from { filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.25)); }
-      to   { filter: drop-shadow(0 0 28px rgba(239, 68, 68, 0.6)); }
-    }
-
-    .lock-red-dash {
-      width: 36px;
-      height: 3.5px;
-      background: #ef4444;
-      border-radius: 2px;
-      margin: 8px auto 0;
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
-      flex-shrink: 0;
-    }
-
-    .lock-welcome {
-      font-size: clamp(1.42rem, 3.2vh, 1.88rem);
-      font-weight: 800;
-      letter-spacing: 0.40em;
-      color: #ffffff;
-      text-transform: uppercase;
-      font-family: 'Barlow Condensed', 'Inter', sans-serif;
-      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
-      margin: 0;
-      line-height: 1.15;
-    }
-
-    /* Landing Page Logo */
-    .lock-logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      width: 100%;
-      max-width: 360px;
-      flex-shrink: 0;
-    }
-    .lock-logo-img {
-      width: 100%;
-      max-width: clamp(280px, 75vw, 360px);
-      height: auto;
-      display: block;
-      filter: drop-shadow(0 0 22px rgba(239, 68, 68, 0.5));
-      animation: logoGlow 3s infinite alternate ease-in-out;
-    }
-    @keyframes logoGlow {
-      from { filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.35)); }
-      to   { filter: drop-shadow(0 0 32px rgba(239, 68, 68, 0.7)); }
-    }
-
-    /* Remove old SVG door icon classes */
-    .door-icon-wrap, .door-icon-3d { display: none; }
-    .logo-word { display: none; }
-
-    .lock-subtitle {
-      font-size: clamp(1.22rem, 2.7vh, 1.55rem);
-      font-weight: 800;
-      letter-spacing: 0.32em;
-      color: #ffffff;
-      text-transform: uppercase;
-      font-family: 'Barlow Condensed', 'Inter', sans-serif;
-      line-height: 1.15;
-      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
-      margin: 0;
-    }
-
-    /* Fingerprint Button with Halo Glowing Ring */
-    .fingerprint-btn-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      width: 100%;
-      margin: 0 auto;
-      flex-shrink: 0;
-    }
-
-    .fingerprint-halo {
-      width: clamp(80px, 11.5vh, 96px);
-      height: clamp(80px, 11.5vh, 96px);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid rgba(239, 68, 68, 0.9);
-      box-shadow: 0 0 26px rgba(239, 68, 68, 0.7), inset 0 0 14px rgba(239, 68, 68, 0.4);
-      position: relative;
-      transition: all 220ms ease;
-    }
-    .fingerprint-halo::before {
-      content: '';
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 1.5px dashed rgba(239, 68, 68, 0.5);
-      animation: rotateRing 14s infinite linear;
-    }
-    @keyframes rotateRing {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-
-    .fingerprint-btn {
-      width: clamp(62px, 9vh, 76px);
-      height: clamp(62px, 9vh, 76px);
-      border-radius: 50%;
-      background: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
-      transition: all 220ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .fingerprint-btn svg {
-      width: clamp(34px, 5vh, 42px);
-      height: clamp(34px, 5vh, 42px);
-      color: #0f172a;
-      transition: all 200ms ease;
-    }
-    .fingerprint-btn-wrap:hover .fingerprint-halo,
-    .fingerprint-btn-wrap:active .fingerprint-halo {
-      box-shadow: 0 0 40px rgba(239, 68, 68, 1), inset 0 0 20px rgba(239, 68, 68, 0.6);
-      border-color: #ef4444;
-    }
-    .fingerprint-btn-wrap:hover .fingerprint-btn,
-    .fingerprint-btn-wrap:active .fingerprint-btn {
-      transform: scale(1.06);
-    }
-    .fingerprint-btn-wrap:hover .fingerprint-btn svg,
-    .fingerprint-btn-wrap:active .fingerprint-btn svg {
-      color: #ef4444;
-    }
-    .fingerprint-btn.scanning {
-      animation: fpScanPulse 0.4s infinite alternate ease-in-out;
-    }
-    @keyframes fpScanPulse {
-      from { transform: scale(1.02); filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.85)); }
-      to { transform: scale(1.10); filter: drop-shadow(0 0 42px rgba(239, 68, 68, 1)); }
-    }
-
-    .fingerprint-text {
-      margin-top: clamp(12px, 2.2vh, 18px);
-      font-size: clamp(1.12rem, 2.4vh, 1.45rem);
-      font-weight: 800;
-      letter-spacing: 0.36em;
-      color: #ffffff;
-      font-family: 'Barlow Condensed', 'Inter', sans-serif;
-      text-transform: uppercase;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
-      line-height: 1.15;
-    }
-
-    /* Desktop View: Single Vertical Poster (Same as Mobile, Larger Fonts) */
-    @media (min-width: 900px) {
-      .lock-content {
-        max-width: 500px;
-        height: 100%;
-        max-height: 96vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        padding: 20px 0;
-        background: none;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-      }
-      .lock-artwork {
-        display: none;
-      }
-      .lock-welcome {
-        font-size: 2.15rem !important;
-        letter-spacing: 0.42em;
-      }
-      .lock-logo-img {
-        max-width: 460px;
-      }
-      .lock-subtitle {
-        font-size: 2.0rem !important;
-        letter-spacing: 0.36em;
-      }
-      .fingerprint-halo {
-        width: 108px;
-        height: 108px;
-      }
-      .fingerprint-btn {
-        width: 84px;
-        height: 84px;
-      }
-      .fingerprint-btn svg {
-        width: 46px;
-        height: 46px;
-      }
-      .fingerprint-text {
-        font-size: 1.75rem !important;
-        letter-spacing: 0.38em;
-        margin-top: 18px;
-      }
-    }
-
-    /* ══════════════════════════════════════════════════════════════════════════
-       2. MAIN SOC DASHBOARD (RESPONSIVE DESKTOP & MOBILE)
-       ══════════════════════════════════════════════════════════════════════════ */
-    #dashboardApp {
-      display: none; /* Hidden until unlocked to prevent any background scroll leak */
-      min-height: 100vh;
-      width: 100%;
-      flex-direction: column;
-    }
-
-    /* Centered Target Honeypot Banner */
-    .top-banner-center {
-      width: 100%;
-      padding: 16px 20px 6px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(180deg, rgba(239, 68, 68, 0.08) 0%, transparent 100%);
-    }
-    .target-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 28px;
-      border-radius: 999px;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      box-shadow: 0 0 25px rgba(239, 68, 68, 0.2);
-    }
-    .pulsing-red-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #ef4444;
-      box-shadow: 0 0 10px #ef4444;
-      animation: pulseGlow 1.5s infinite alternate ease-in-out;
-    }
-    @keyframes pulseGlow {
-      from { transform: scale(0.9); opacity: 0.7; }
-      to { transform: scale(1.3); opacity: 1; }
-    }
-
-    /* Header Navigation (with iOS Notch & Safe Area Inset Support) */
-    .soc-topbar {
-      width: 100%;
-      padding-top: max(env(safe-area-inset-top, 0px), 8px);
-      padding-bottom: 8px;
-      padding-left: max(env(safe-area-inset-left, 0px), 24px);
-      padding-right: max(env(safe-area-inset-right, 0px), 24px);
-      min-height: calc(62px + env(safe-area-inset-top, 0px));
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border-subtle);
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .soc-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-self: start;
-    }
-    /* Real FALSEDOOR logo PNG in the topbar — prominently sized for desktop & mobile */
-    .soc-brand-logo {
-      height: 40px;
-      width: auto;
-      display: block;
-      filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.45));
-      flex-shrink: 0;
-    }
-
-    /* Desktop Navigation Tabs — centered via grid middle column */
-    .desktop-tabs {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      justify-self: center;
-    }
-    .tab-nav-btn {
-      padding: 7px 14px;
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      font-size: 0.82rem;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 180ms ease;
-      white-space: nowrap;
-    }
-    .tab-nav-btn:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .tab-nav-btn.active {
-      background: var(--bg-card);
-      border-color: var(--border-medium);
-      color: #ffffff;
-      box-shadow: inset 0 -2px 0 var(--red-bright);
-    }
-
-    .topbar-controls {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .stream-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 999px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--green-online);
-      font-family: 'JetBrains Mono', monospace;
-      letter-spacing: 0.04em;
-    }
-    .stream-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green-online);
-      box-shadow: 0 0 8px var(--green-online);
-      animation: pulseGlow 1.4s infinite alternate;
-    }
-
-    /* Main Container — utilizing desktop real estate gracefully */
-    .main-wrapper {
-      max-width: 1680px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 16px 24px;
-      flex: 1;
-    }
-
-    /* Views */
-    .view-section {
-      display: none;
-      animation: fadeInView 200ms ease;
-    }
-    .view-section.active {
-      display: block;
-    }
-    @keyframes fadeInView { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* KPI Cards — sleek, compact, refined typography */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-    .kpi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 12px 14px;
-      position: relative;
-      transition: border-color 200ms ease, box-shadow 200ms ease;
-    }
-    .kpi-card:hover {
-      border-color: var(--border-medium);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-    }
-    .kpi-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      gap: 8px;
-    }
-    .kpi-title {
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      line-height: 1.25;
-    }
-    .kpi-badge {
-      font-size: 0.58rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-dim);
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .kpi-value {
-      font-size: 1.45rem;
-      font-weight: 900;
-      color: #ffffff;
-      font-family: 'JetBrains Mono', monospace;
-      line-height: 1.15;
-    }
-    .kpi-sub {
-      margin-top: 4px;
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    /* Charts & Panels */
-    .charts-grid-2col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    @media (max-width: 900px) {
-      .charts-grid-2col { grid-template-columns: 1fr; }
-      .kpi-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 480px) {
-      .kpi-grid { grid-template-columns: 1fr; }
-    }
-
-    .soc-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 13px 15px;
-      margin-bottom: 12px;
-    }
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .panel-header h3 {
-      font-size: 0.85rem;
-      font-weight: 750;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      letter-spacing: 0.02em;
-    }
-
-    /* Donut / Pie Chart Layout — compact, high-density */
-    .pie-chart-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      gap: 20px;
-      flex-wrap: wrap;
-      padding: 6px 0;
-    }
-    .donut-disc {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      background: conic-gradient(#ef4444 0% 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 18px rgba(239, 68, 68, 0.22);
-      position: relative;
-    }
-    .donut-disc::after {
-      content: '';
-      width: 86px;
-      height: 86px;
-      border-radius: 50%;
-      background: var(--bg-card);
-      position: absolute;
-    }
-    .donut-center-text {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .donut-center-text strong {
-      font-size: 1.25rem;
-      font-weight: 850;
-      color: #ffffff;
-      font-family: 'JetBrains Mono', monospace;
-      line-height: 1.1;
-    }
-    .donut-center-text span {
-      font-size: 0.58rem;
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-    }
-
-    /* Bar Charts */
-    .bar-list {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      width: 100%;
-    }
-    .bar-item {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .bar-item-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.74rem;
-    }
-    .bar-track {
-      height: 6px;
-      background: #202028;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 400ms ease;
-    }
-
-    /* Tables — compact high-density SOC command style */
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
-    }
-    .table-soc {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.74rem;
-      text-align: left;
-    }
-    .table-soc th {
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.67rem;
-      font-weight: 700;
-      padding: 7px 10px;
-      border-bottom: 1px solid var(--border-subtle);
-      white-space: nowrap;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .table-soc td {
-      padding: 7px 10px;
-      border-bottom: 1px solid #1a1a24;
-      color: #cbd5e1;
-      white-space: nowrap;
-    }
-    .badge-class {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-size: 0.68rem;
-      font-weight: 700;
-      background: rgba(239, 68, 68, 0.15);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-    .badge-class.command {
-      background: rgba(245, 158, 11, 0.15);
-      color: #f59e0b;
-      border-color: rgba(245, 158, 11, 0.3);
-    }
-    .badge-class.malware {
-      background: rgba(220, 38, 38, 0.25);
-      color: #f87171;
-      border-color: rgba(220, 38, 38, 0.5);
-    }
-
-    .btn-action-secondary {
-      height: 28px;
-      padding: 0 10px;
-      border-radius: 5px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-medium);
-      color: var(--text-muted);
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 180ms ease;
-    }
-    .btn-action-secondary:hover { color: #fff; border-color: #777; }
-
-    /* ML Tab Pie Container */
-    .ml-pie-container {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      padding: 10px 0;
-      width: 100%;
-    }
-    .ml-breakdown-wrapper {
-      flex: 1;
-      min-width: 260px;
-      width: 100%;
-    }
-
-    /* Model Specifications Grid — neat 4 columns on desktop */
-    .ml-spec-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      font-size: 0.78rem;
-    }
-    @media (max-width: 1024px) {
-      .ml-spec-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    .ml-spec-card {
-      background: #111116;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-subtle);
-    }
-
-    /* Health Verification Grid — clean responsive grid */
-    .health-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 10px;
-      width: 100%;
-    }
-
-    /* Decoy Threat Velocity & Ingestion Metrics Grid */
-    .telemetry-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      font-size: 0.78rem;
-    }
-    .telemetry-tile {
-      background: #111116;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid #1f1f2a;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .telemetry-title {
-      color: #64748b;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      min-height: 24px;
-      display: flex;
-      align-items: flex-start;
-      line-height: 1.2;
-    }
-    .telemetry-val {
-      font-size: 1.05rem;
-      font-weight: 800;
-      margin: 4px 0;
-      line-height: 1.15;
-      display: flex;
-      align-items: center;
-      min-height: 22px;
-    }
-    .telemetry-sub {
-      color: #94a3b8;
-      font-size: 0.66rem;
-      line-height: 1.25;
-      min-height: 20px;
-      display: flex;
-      align-items: flex-start;
-    }
-
-    /* Mobile Bottom Navigation Dock (Pixel-Perfect for iOS Safari, Android Chrome & Desktop) */
-    .mobile-dock {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      min-height: calc(56px + env(safe-area-inset-bottom, 0px));
-      height: calc(56px + env(safe-area-inset-bottom, 0px));
-      padding-top: 6px;
-      padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px);
-      padding-left: max(env(safe-area-inset-left, 0px), 4px);
-      padding-right: max(env(safe-area-inset-right, 0px), 4px);
-      background: rgba(13, 13, 18, 0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border-medium);
-      align-items: stretch;
-      justify-content: space-around;
-      z-index: 999;
-      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.65);
-      box-sizing: border-box;
-    }
-    .dock-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      font-size: 0.66rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      gap: 3px;
-      cursor: pointer;
-      flex: 1;
-      height: 100%;
-      min-height: 44px;
-      padding: 0;
-      margin: 0;
-      transition: color 180ms ease;
-      position: relative;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      user-select: none;
-      box-sizing: border-box;
-    }
-    .dock-link svg {
-      width: 20px;
-      height: 20px;
-      min-width: 20px;
-      min-height: 20px;
-      max-width: 20px;
-      max-height: 20px;
-      flex-shrink: 0;
-      display: block;
-      margin: 0 auto;
-      transition: transform 180ms ease, stroke 180ms ease;
-    }
-    .dock-link span {
-      display: block;
-      font-size: 0.66rem;
-      line-height: 1.15;
-      white-space: nowrap;
-      text-align: center;
-      letter-spacing: -0.01em;
-      margin-top: 1px;
-    }
-    .dock-link.active {
-      color: var(--red-bright);
-    }
-    .dock-link.active svg {
-      stroke: var(--red-bright);
-      filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.85));
-      transform: translateY(-1px);
-    }
-    .dock-link.active::after {
-      content: '';
-      position: absolute;
-      top: -6px;
-      left: 14%;
-      right: 14%;
-      height: 3px;
-      background: var(--red-bright);
-      border-radius: 0 0 4px 4px;
-      box-shadow: 0 0 8px var(--red-bright);
-    }
-
-    @media (max-width: 768px) {
-      .desktop-tabs { display: none; }
-      .mobile-dock { display: flex; }
-      .soc-brand-logo { height: 34px; }
-      .soc-topbar {
-        grid-template-columns: 1fr auto;
-        padding-top: max(env(safe-area-inset-top, 0px), 8px);
-        padding-bottom: 8px;
-        padding-left: max(env(safe-area-inset-left, 0px), 16px);
-        padding-right: max(env(safe-area-inset-right, 0px), 16px);
-        min-height: calc(58px + env(safe-area-inset-top, 0px));
-        height: auto;
-      }
-      .main-wrapper { padding: 10px 12px calc(76px + env(safe-area-inset-bottom, 0px)); }
-      
-      /* Full Symmetrical Cards on Mobile */
-      .kpi-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-      .kpi-card {
-        padding: 12px 14px;
-        border-radius: 10px;
-      }
-      .kpi-value { font-size: 1.35rem; }
-      
-      .soc-panel {
-        padding: 12px 14px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-      }
-      .panel-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        width: 100%;
-      }
-      .panel-header > div:first-child { width: 100%; }
-
-      /* Centered ML & Overview Donut Charts on Mobile (Zero empty space) */
-      .ml-pie-container {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        gap: 20px;
-        padding: 8px 0;
-      }
-      .ml-pie-container .donut-disc {
-        margin: 0 auto !important;
-        align-self: center;
-      }
-      .ml-breakdown-wrapper {
-        min-width: 0 !important;
-        width: 100%;
-      }
-
-      .pie-chart-wrap {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        gap: 20px;
-        width: 100%;
-      }
-      .pie-chart-wrap .donut-disc {
-        margin: 0 auto !important;
-        align-self: center;
-      }
-      .pie-chart-wrap > div:last-child {
-        width: 100%;
-        min-width: 0 !important;
-      }
-
-      .donut-disc {
-        width: 150px;
-        height: 150px;
-        margin: 0 auto;
-      }
-      .donut-disc::after { width: 100px; height: 100px; }
-
-      .ml-spec-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-      .health-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .telemetry-grid {
-        gap: 10px;
-      }
-      .telemetry-tile {
-        padding: 12px 10px;
-      }
-      .telemetry-title {
-        font-size: 0.7rem;
-        min-height: 32px;
-      }
-      .telemetry-val {
-        font-size: 1.25rem;
-        min-height: 26px;
-      }
-      .telemetry-sub {
-        font-size: 0.68rem;
-        min-height: 30px;
-      }
-
-      .top-banner-center {
-        padding: 10px 12px 6px;
-        display: flex;
-        justify-content: center;
-        width: 100%;
-      }
-      .target-pill {
-        padding: 9px 16px;
-        gap: 8px;
-        font-size: 0.85rem;
-        width: 100%;
-        max-width: 400px;
-        justify-content: center;
-      }
-    }
-    @media (max-width: 480px) {
-      .main-wrapper { padding: 10px 12px 94px; }
-      .kpi-value { font-size: 1.6rem; }
-      .panel-header h3 { font-size: 0.92rem; }
-      .table-soc { font-size: 0.76rem; }
-      .table-soc td, .table-soc th { padding: 8px 6px; }
-      .bar-item-header { font-size: 0.76rem; }
-      .target-pill { padding: 8px 12px; font-size: 0.8rem; }
-      .telemetry-grid { gap: 8px; }
-      .telemetry-tile { padding: 10px 8px; }
-      .telemetry-title { font-size: 0.66rem; min-height: 30px; }
-      .telemetry-val { font-size: 1.15rem; min-height: 24px; }
-    }
-
-    /* ══════════════════════════════════════════════════════════════════════════
-       DESKTOP VIEW REFINEMENT (HIGH CLARITY, EXPANSIVE FONTS & BOLD SOC CARDS)
-       ══════════════════════════════════════════════════════════════════════════ */
-    @media (min-width: 900px) {
-      .main-wrapper {
-        padding: 24px 36px 36px;
-      }
-      .soc-topbar {
-        min-height: 70px;
-        padding-left: 36px;
-        padding-right: 36px;
-      }
-      .soc-brand-logo {
-        height: 44px;
-      }
-      .tab-nav-btn {
-        font-size: 0.94rem;
-        padding: 9px 18px;
-        border-radius: 8px;
-      }
-      .stream-pill {
-        font-size: 0.82rem;
-        padding: 7px 16px;
-      }
-      .top-banner-center {
-        padding: 20px 24px 10px;
-      }
-      .target-pill {
-        padding: 12px 38px;
-        font-size: 1.05rem;
-        gap: 16px;
-      }
-      .target-pill strong {
-        font-size: 1.15rem !important;
-      }
-      .kpi-grid {
-        gap: 18px;
-        margin-bottom: 22px;
-      }
-      .kpi-card {
-        padding: 20px 24px;
-        border-radius: 14px;
-      }
-      .kpi-title {
-        font-size: 0.92rem;
-        letter-spacing: 0.05em;
-      }
-      .kpi-badge {
-        font-size: 0.72rem;
-        padding: 4px 10px;
-        border-radius: 4px;
-        background: rgba(255, 255, 255, 0.05);
-      }
-      .kpi-value {
-        font-size: 2.3rem;
-        margin-top: 6px;
-      }
-      .kpi-sub {
-        font-size: 0.85rem;
-        margin-top: 6px;
-      }
-      .charts-grid-2col {
-        gap: 18px;
-        margin-bottom: 18px;
-      }
-      .soc-panel {
-        padding: 22px 26px;
-        border-radius: 14px;
-        margin-bottom: 22px;
-      }
-      .panel-header {
-        margin-bottom: 16px;
-      }
-      .panel-header h3 {
-        font-size: 1.18rem;
-      }
-      .table-soc {
-        font-size: 0.88rem;
-      }
-      .table-soc th {
-        font-size: 0.78rem;
-        padding: 12px 14px;
-      }
-      .table-soc td {
-        font-size: 0.86rem;
-        padding: 12px 14px;
-      }
-      .badge-class {
-        font-size: 0.78rem;
-        padding: 4px 10px;
-        border-radius: 5px;
-      }
-      .donut-disc {
-        width: 175px;
-        height: 175px;
-      }
-      .donut-disc::after {
-        width: 118px;
-        height: 118px;
-      }
-      .donut-center-text strong {
-        font-size: 1.75rem;
-      }
-      .donut-center-text span {
-        font-size: 0.76rem;
-      }
-      .bar-list {
-        gap: 12px;
-      }
-      .bar-item-header {
-        font-size: 0.88rem;
-        margin-bottom: 4px;
-      }
-      .bar-track {
-        height: 8px;
-      }
-      .telemetry-grid {
-        gap: 14px;
-      }
-      .telemetry-tile {
-        padding: 16px 18px;
-        border-radius: 10px;
-      }
-      .telemetry-title {
-        font-size: 0.82rem;
-        min-height: 26px;
-      }
-      .telemetry-val {
-        font-size: 1.6rem;
-        min-height: 30px;
-        margin: 6px 0;
-      }
-      .telemetry-sub {
-        font-size: 0.80rem;
-      }
-      .ml-spec-grid {
-        gap: 16px;
-      }
-      .ml-spec-card {
-        padding: 16px 18px;
-        border-radius: 10px;
-        font-size: 0.88rem;
-      }
-      .health-grid {
-        gap: 16px;
-      }
-    }
-
-    /* Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .modal-backdrop.open { display: flex; }
-    .modal-box {
-      width: 100%;
-      max-width: 580px;
-      max-height: 85vh;
-      background: #111116;
-      border: 1px solid var(--border-medium);
-      border-radius: 14px;
-      overflow-y: auto;
-      padding: 24px;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2.3" />
 </head>
 <body class="locked-state">
-
-  <!-- ══════════════════════════════════════════════════════════════════════════
-       1. SCREEN 1: INDEX FINGERPRINT ENTRY PAGE (100% STATIC & LOCKED ON MOBILE)
-       ══════════════════════════════════════════════════════════════════════════ -->
-  <div id="lockScreen">
-    <div class="lock-content">
-      <!-- Top 3D Red Door & Sunken Pit Artwork -->
-      <div class="lock-artwork">
-        <img src="landing-door.png" alt="FALSEDOOR Trap" class="lock-artwork-img" draggable="false" />
-      </div>
-
-      <div>
-        <div class="lock-welcome">WELCOME TO</div>
-        <div class="lock-red-dash"></div>
-      </div>
-
-      <!-- Real FALSEDOOR logo PNG -->
+<div id="lockScreen" onclick="unlockScreen()">
+    <div class="lock-content" onclick="unlockScreen()">
+      <div class="lock-welcome">WELCOME TO</div>
       <div class="lock-logo">
         <img class="lock-logo-img" src="falsedoor-logo.png" alt="FALSEDOOR Logo" draggable="false" />
       </div>
-
       <div>
         <div class="lock-subtitle">STEP IN. GET CAUGHT.</div>
         <div class="lock-red-dash"></div>
       </div>
-
-      <!-- Clean Mobile-Compliant Fingerprint Button with Red Glowing Halo Ring -->
-      <div class="fingerprint-btn-wrap" onclick="scanFingerprint()">
+<div class="fingerprint-btn-wrap" onclick="unlockScreen()">
         <div class="fingerprint-halo">
-          <div class="fingerprint-btn" id="fpButton">
+          <div class="fingerprint-btn" id="fpButton" onclick="unlockScreen()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
-              <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
-              <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
-              <path d="M2 12a10 10 0 0 1 18-6"/>
-              <path d="M2 17c1 0 1.5-.5 1.5-1.5S2 14 2 12.5"/>
-              <path d="M20 12c-.5 0-1.5 1-1.5 2.5S20 17 20 18"/>
-              <path d="M7 13.5c0-.41.1-.82.25-1.17"/>
-              <path d="M7.5 17c.41 1.24.92 2.46 1.5 3"/>
-              <path d="M9.5 6.5A9.97 9.97 0 0 1 12 6a9.97 9.97 0 0 1 7 2.86"/>
+              <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+              <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+              <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+              <path d="M2 12a10 10 0 0 1 18-6" />
+              <path d="M2 17c1 0 1.5-.5 1.5-1.5S2 14 2 12.5" />
+              <path d="M20 12c-.5 0-1.5 1-1.5 2.5S20 17 20 18" />
+              <path d="M7 13.5c0-.41.1-.82.25-1.17" />
+              <path d="M7.5 17c.41 1.24.92 2.46 1.5 3" />
+              <path d="M9.5 6.5A9.97 9.97 0 0 1 12 6a9.97 9.97 0 0 1 7 2.86" />
             </svg>
           </div>
         </div>
@@ -1296,174 +49,175 @@
       </div>
     </div>
   </div>
-
-  <!-- ══════════════════════════════════════════════════════════════════════════
-       2. SCREEN 2: MAIN SOC DASHBOARD (NATURAL RESPONSIVE DESKTOP & MOBILE)
-       ══════════════════════════════════════════════════════════════════════════ -->
-  <div id="dashboardApp">
-
-    <!-- Header Navigation -->
-    <header class="soc-topbar">
+<div id="dashboardApp">
+<div id="systemOfflineBanner">SERVER OFFLINE</div>
+<div id="systemOnlineOverlay">
+      <span class="pulsing-red-dot" style="background:#10b981; box-shadow:0 0 10px #10b981;"></span>
+      <span>SYSTEM ONLINE — LIVE MONITORING RESTORED</span>
+    </div>
+<header class="soc-topbar">
       <div class="soc-brand">
-        <!-- Real FALSEDOOR logo PNG in topbar -->
         <img class="soc-brand-logo" src="falsedoor-logo.png" alt="FALSEDOOR" draggable="false" />
       </div>
-
-      <!-- Desktop Tabs -->
-      <nav class="desktop-tabs">
+<nav class="desktop-tabs">
         <button class="tab-nav-btn active" onclick="navigateTab('overview', this)">Overview</button>
         <button class="tab-nav-btn" onclick="navigateTab('livefeed', this)">Live Attack Feed</button>
         <button class="tab-nav-btn" onclick="navigateTab('mlmodel', this)">ML Classification</button>
+        <button class="tab-nav-btn" onclick="navigateTab('confusionmatrix', this)">Confusion Matrix</button>
         <button class="tab-nav-btn" onclick="navigateTab('logs', this)">Forensic Logs</button>
         <button class="tab-nav-btn" onclick="navigateTab('health', this)">Pipeline Health</button>
+        <button class="tab-nav-btn" onclick="navigateTab('falsedooracademy', this)">FALSEDOOR Academy</button>
       </nav>
-
-      <!-- Live Stream Status & API Configuration -->
-      <div class="topbar-controls" style="display:flex; align-items:center; justify-self:end;">
-        <button id="streamStatusBtn" class="stream-pill" onclick="openApiModal()" style="cursor:pointer; background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.3); font-family:inherit;" title="Click to view or connect your Raspberry Pi / ngrok URL">
+<div class="topbar-controls">
+        <button id="streamStatusBtn" class="stream-pill" onclick="openApiModal()" title="Configure Honeypot Backend Host URL">
           <i id="streamStatusDot" class="stream-dot"></i>
-          <span id="streamStatusText">STREAMING LIVE</span>
+          <span id="streamStatusText">
+            <span class="desktop-text">SNIFFING</span>
+            <span class="mobile-text">Live</span>
+          </span>
+        </button>
+        <button id="topAskAiBtn" class="ask-ai-pill" onclick="openAskAiModal()" title="Ask Gemini AI anything about FALSEDOOR or cybersecurity">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="desktop-text">Ask AI</span>
+          <span class="mobile-text">AI</span>
         </button>
       </div>
     </header>
-
-    <!-- Centered Target Honeypot Pill (Below Navigation Bar) -->
-    <div class="top-banner-center">
+<div class="top-banner-center">
       <div class="target-pill">
         <span class="pulsing-red-dot"></span>
-        <span style="color:#ef4444; font-weight:800; letter-spacing:0.04em;">🎯 TARGET HONEYPOT:</span>
+        <span style="color:#ef4444; font-weight:800; letter-spacing:0.04em;">TARGET HONEYPOT:</span>
         <strong id="bannerTargetIp" class="mono" style="color:#ffffff; font-size:0.96rem; font-weight:800;">172.20.10.2:2222</strong>
       </div>
     </div>
-
-    <!-- Main Content Area -->
-    <main class="main-wrapper">
-
-      <!-- ─── TAB 1: OVERVIEW (FULL OF CHARTS, DUPLICATE TABLE REMOVED) ─── -->
-      <section class="view-section active" id="view-overview">
-        <!-- 3 Clean KPI Cards (Target Honeypot card removed as it's already centered above) -->
+<main class="main-wrapper">
+<section class="view-section active" id="view-overview">
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-top">
               <span class="kpi-title">Total Intercepted Attacks</span>
               <span class="kpi-badge">SYSTEM TELEMETRY</span>
             </div>
-            <div class="kpi-value" id="kpiTotal">17</div>
+            <div class="kpi-value" id="kpiTotal">0</div>
             <div class="kpi-sub">Real-Time Cowrie Telemetry</div>
           </div>
-
           <div class="kpi-card">
             <div class="kpi-top">
               <span class="kpi-title">Unique Attacker IPs</span>
               <span class="kpi-badge">ADVERSARY SOURCES</span>
             </div>
-            <div class="kpi-value" id="kpiUnique">1</div>
-            <div class="kpi-sub" style="color: #cbd5e1;">Adversary Source IPs</div>
+            <div class="kpi-value" id="kpiUnique">0</div>
+            <div class="kpi-sub">Adversary Source Networks</div>
           </div>
-
           <div class="kpi-card">
             <div class="kpi-top">
-              <span class="kpi-title">Predominant Attack Class</span>
+              <span class="kpi-title">Most Frequent Attack Class</span>
               <span class="kpi-badge">ML INFERENCE</span>
             </div>
-            <div class="kpi-value" id="kpiMostCommon" style="font-size: 1.15rem; color: #ef4444;">Brute Force</div>
-            <div class="kpi-sub" id="kpiMostCommonSub">Random Forest Classifier</div>
+            <div class="kpi-value" id="kpiMostCommon" style="font-size: 1.25rem; color: #ef4444;">Awaiting Host Link</div>
+            <div class="kpi-sub">Random Forest Classifier (n=100)</div>
           </div>
         </div>
-
-        <!-- Chart Row 1: Attack Distribution Pie/Donut + Top Attacker Sources Bar Chart -->
-        <div class="charts-grid-2col">
-          <!-- Chart A: Attack Classification Pie/Donut -->
+<div class="charts-grid-2col">
           <div class="soc-panel">
             <div class="panel-header">
-              <h3>🥧 Attack Classification Distribution (Pie Chart)</h3>
-              <span class="badge-class" id="threatBadge" style="color:#f59e0b; border-color:#f59e0b;">ELEVATED THREAT</span>
+              <h3>Attack Categories Comparison &amp; Benchmark</h3>
+              <span class="badge-class" style="color:#10b981; border-color:#10b981;">Random Forest Evaluated</span>
             </div>
-            <div class="pie-chart-wrap">
-              <div class="donut-disc" id="donutDiscOverview">
-                <div class="donut-center-text">
-                  <strong id="donutTotalVal">17</strong>
-                  <span>EVENTS</span>
-                </div>
-              </div>
-              <div id="overviewPieLegend" style="display:flex; flex-direction:column; gap:7px; min-width:180px; font-size:0.75rem;"></div>
-            </div>
+            <div id="attackCategoryBarChartContainer" style="padding:4px 0;"></div>
           </div>
-
-          <!-- Chart B: Top Attacker Sources (Horizontal Bar Chart) -->
-          <div class="soc-panel">
+<div class="soc-panel">
             <div class="panel-header">
-              <h3>📊 Top Attacker Sources (Ranked by Attempts)</h3>
+              <h3>Top Attacker IP Address (Ranked by Attempts)</h3>
             </div>
             <div id="topAttackersBarList" class="bar-list"></div>
           </div>
         </div>
-
-        <!-- Chart Row 2: Honeypot Decoy Action Breakdown + Threat Telemetry Gauge -->
-        <div class="charts-grid-2col">
-          <!-- Chart C: Honeypot Event Type Breakdown (Bar Chart) -->
-          <div class="soc-panel">
-            <div class="panel-header">
-              <h3>📈 Honeypot Decoy Action Breakdown</h3>
+<div class="soc-panel">
+          <div class="panel-header">
+            <div>
+              <h3>Real-Time Attack Activity Timeline</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+                Interactive detected event velocity over chronological time with spike detection.
+              </p>
             </div>
-            <div id="eventTypesBarList" class="bar-list"></div>
+            <div class="timeline-filter-bar">
+              <button class="filter-chip-btn timeline-range-btn active" onclick="setTimelineRange('live', this)">Last 10 Seconds</button>
+              <button class="filter-chip-btn timeline-range-btn" onclick="setTimelineRange('15m', this)">Last 15 Minutes</button>
+              <button class="filter-chip-btn timeline-range-btn" onclick="setTimelineRange('1h', this)">Last Hour</button>
+              <button class="filter-chip-btn timeline-range-btn" onclick="setTimelineRange('24h', this)">Last 24 Hours</button>
+              <button class="filter-chip-btn timeline-range-btn" onclick="setTimelineRange('7d', this)">Last 7 Days</button>
+            </div>
           </div>
-
-          <!-- Chart D: Attack Telemetry & Session Metrics -->
-          <div class="soc-panel">
-            <div class="panel-header">
-              <h3>🛡️ Decoy Threat Velocity &amp; Ingestion Metrics</h3>
+          <div id="timelineChartWrapper" class="timeline-chart-container"></div>
+        </div>
+<div class="soc-panel" style="margin-bottom:24px;">
+          <div class="panel-header">
+            <div>
+              <h3>ATTACK TIMING ANALYSIS</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+                Quantitative hourly density and daily calendar volume computed directly from cowrie.json log stream.
+              </p>
             </div>
-            <div class="telemetry-grid">
-              <div class="telemetry-tile">
-                <span class="telemetry-title">CURRENT THREAT RATING</span>
-                <p id="threatRatingText" class="telemetry-val" style="color:#f59e0b; font-size:1.15rem;">ELEVATED THREAT</p>
-                <small class="telemetry-sub">Assessed from live ML payloads</small>
+            <span id="temporalSummaryBadge" class="badge-class" style="color:#10b981; border-color:#10b981;">Live Ingestion</span>
+          </div>
+<div class="temporal-cards-grid">
+            <div class="intel-card">
+              <div class="intel-card-header">
+                <span style="color:#ef4444; font-weight:800; font-size:0.82rem; letter-spacing:0.04em;">MOST FREQUENT ATTACK TIMES (24H HOURLY DISTRIBUTION)</span>
+                <span id="peakHourBadge" class="mono" style="font-size:0.75rem; color:#fff; background:#1c1c28; padding:3px 8px; border-radius:4px; border:1px solid #2e2e42;">Peak: Calculating...</span>
               </div>
-              <div class="telemetry-tile">
-                <span class="telemetry-title">COMMANDS CAPTURED</span>
-                <p id="commandsCapturedCount" class="telemetry-val mono" style="color:#f59e0b;">2</p>
-                <small class="telemetry-sub">Payloads executed inside decoy</small>
+              <div id="temporalDistributionContainer"></div>
+            </div>
+<div class="intel-card">
+              <div class="intel-card-header">
+                <span style="color:#f59e0b; font-weight:800; font-size:0.82rem; letter-spacing:0.04em;">ATTACK ACTIVITY BY DAY &amp; DATE</span>
+                <span id="peakDayBadge" class="mono" style="font-size:0.75rem; color:#fff; background:#1c1c28; padding:3px 8px; border-radius:4px; border:1px solid #2e2e42;">Peak Day: Calculating...</span>
               </div>
-              <div class="telemetry-tile">
-                <span class="telemetry-title">FAILED AUTH ATTEMPTS</span>
-                <p id="failedLoginsCount" class="telemetry-val mono" style="color:#ef4444;">7</p>
-                <small class="telemetry-sub">Brute force credential tests</small>
-              </div>
-              <div class="telemetry-tile">
-                <span class="telemetry-title">TRAPPED SESSIONS</span>
-                <p id="successfulLoginsCount" class="telemetry-val mono" style="color:#38bdf8;">4</p>
-                <small class="telemetry-sub">Allowed into isolated honeypot</small>
-              </div>
+              <div id="attackDateActivityContainer"></div>
             </div>
           </div>
         </div>
       </section>
-
-      <!-- ─── TAB 2: LIVE FEED ─── -->
-      <section class="view-section" id="view-livefeed">
+<section class="view-section" id="view-livefeed">
         <div class="soc-panel">
           <div class="panel-header">
             <div>
               <h3>Active Telemetry Event Queue</h3>
-              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Live Cowrie honeypot events against Target <span class="mono" style="color:#38bdf8;">172.20.10.2:2222</span> classified in real time.</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                Sequential live Cowrie honeypot events against Target <span class="mono" style="color:#38bdf8;">172.20.10.2:2222</span> classified by Random Forest.
+              </p>
+            </div>
+            <span id="feedStatusIndicator" class="badge-class" style="color:#10b981; border-color:#10b981;">STREAMING LIVE</span>
+          </div>
+<div class="feed-action-bar">
+            <div class="feed-filters-group">
+              <button id="feedFilterAll" class="filter-chip-btn feed-filter-chip active" onclick="setFeedFilter('all', this)">All Telemetry</button>
+              <button id="feedFilterBf" class="filter-chip-btn feed-filter-chip" onclick="setFeedFilter('Brute Force', this)">SSH Brute Force</button>
+              <button id="feedFilterCmd" class="filter-chip-btn feed-filter-chip" onclick="setFeedFilter('Command Execution', this)">Command Execution</button>
+              <button id="feedFilterMal" class="filter-chip-btn feed-filter-chip" onclick="setFeedFilter('Malware', this)">Malware Attack</button>
+              <button id="feedFilterSess" class="filter-chip-btn feed-filter-chip" onclick="setFeedFilter('SSH Session Activity', this)">SSH Session Activity</button>
+            </div>
+            <div class="feed-controls-group">
+              <button id="pauseFeedBtn" class="btn-ctrl" onclick="toggleFeedPause()">Pause Live Feed</button>
             </div>
           </div>
-
           <div class="table-container">
             <table class="table-soc">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>TIMESTAMP</th>
-                  <th>ATTACKER IP (SOURCE)</th>
-                  <th>TARGET IP (DESTINATION)</th>
-                  <th>ORIGIN</th>
                   <th>EVENT ID</th>
+                  <th>TIMESTAMP</th>
+                  <th>ATTACKER IP</th>
+                  <th>TARGET ENDPOINT</th>
+                  <th>ORIGIN</th>
+                  <th>EVENT TYPE</th>
                   <th>PAYLOAD / COMMAND</th>
                   <th>ML PREDICTION</th>
                   <th>CONFIDENCE</th>
-                  <th>ACTION</th>
+                  <th>FORENSIC</th>
                 </tr>
               </thead>
               <tbody id="liveFeedTableBody"></tbody>
@@ -1471,911 +225,348 @@
           </div>
         </div>
       </section>
-
-      <!-- ─── TAB 3: ML CLASSIFICATION ─── -->
-      <section class="view-section" id="view-mlmodel">
-        <div class="soc-panel">
-          <div class="panel-header">
-            <h3>Random Forest Classification Breakdown</h3>
-            <span class="badge-class">Scikit-Learn (n=100)</span>
-          </div>
-
-          <div class="ml-pie-container">
-            <div class="donut-disc" id="donutDisc">
-              <div class="donut-center-text">
-                <strong id="mlDonutVal">17</strong>
-                <span>CLASSIFIED</span>
-              </div>
-            </div>
-
-            <div class="ml-breakdown-wrapper">
-              <div id="mlBreakdownList" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.76rem;"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="soc-panel">
-          <div class="panel-header">
-            <h3>Model Specifications &amp; Performance</h3>
-          </div>
-          <div class="ml-spec-grid">
-            <div class="ml-spec-card">
-              <span style="color:#64748b; font-size:0.75rem;">ALGORITHM</span>
-              <p id="specAlgorithm" style="margin-top:4px; font-weight:700; color:#fff;">Random Forest (100 Trees)</p>
-            </div>
-            <div class="ml-spec-card">
-              <span style="color:#64748b; font-size:0.75rem;">ACCURACY SCORE</span>
-              <p id="specAccuracy" style="margin-top:4px; font-weight:700; color:#10b981;">99.4% F1-Score</p>
-            </div>
-            <div class="ml-spec-card">
-              <span style="color:#64748b; font-size:0.75rem;">FEATURE DIMENSION</span>
-              <p id="specFeatures" style="margin-top:4px; font-weight:700; color:#fff;">8 Features (eventid, timestamps, src_ip, username...)</p>
-            </div>
-            <div class="ml-spec-card">
-              <span style="color:#64748b; font-size:0.75rem;">TRAINED TARGET CLASSES</span>
-              <p id="specClasses" style="margin-top:4px; font-weight:700; color:#ef4444;">Brute Force  ·  Command Execution  ·  Malware Download Attempt</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── TAB 4: FORENSIC LOGS (REAL cowrie.json FILE STREAM) ─── -->
-      <section class="view-section" id="view-logs">
+<section class="view-section" id="view-mlmodel">
         <div class="soc-panel">
           <div class="panel-header">
             <div>
-              <h3>Raw Honeypot Audit Log (cowrie.json)</h3>
-              <p style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">Literal JSON log stream straight from <span class="mono" style="color:#38bdf8;">var/log/cowrie/cowrie.json</span> on your host machine.</p>
+              <h3>Random Forest Classification Breakdown</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Visual distribution of attacks classified across trained categories.
+              </p>
             </div>
-            <div style="display:flex; gap:8px;">
-              <button class="btn-action-secondary" onclick="downloadSampleLog()">Download cowrie.json</button>
-              <button class="btn-action-secondary" onclick="fetchRawLogs()">Refresh Log</button>
+            <span class="badge-class" style="color:#38bdf8; border-color:#38bdf8;">Scikit-Learn (n=100)</span>
+          </div>
+          <div class="ml-pie-container">
+            <div class="donut-disc" id="donutDisc">
+              <div class="donut-center-text">
+                <strong id="mlDonutVal">18</strong>
+                <span>CLASSIFIED</span>
+              </div>
+            </div>
+            <div class="ml-breakdown-wrapper">
+              <div id="mlBreakdownList"></div>
             </div>
           </div>
-
-          <div style="margin-bottom:12px;">
-            <input type="text" id="logFilterInput" placeholder="Filter cowrie.json by IP, command, or event ID..." oninput="filterRawLogs()" style="width:100%; height:38px; background:#0c0c10; border:1px solid var(--border-medium); border-radius:8px; padding:0 14px; color:#fff; font-size:0.82rem; font-family:'JetBrains Mono', monospace;" />
+        </div>
+<div class="soc-panel">
+          <div class="panel-header">
+            <h3>Model Specifications &amp; Architectural Verification</h3>
+            <span class="badge-class" style="color:#10b981; border-color:#10b981;">Artifact: ml/random_forest_model.pkl</span>
           </div>
-
-          <pre id="rawLogsContainer" style="background:#0a0a0e; border:1px solid #1a1a24; border-radius:8px; padding:16px; color:#94a3b8; font-size:0.78rem; max-height:500px; overflow-y:auto; line-height:1.6;"></pre>
+          <div class="ml-spec-grid">
+            <div class="ml-spec-card">
+              <span>ALGORITHM</span>
+              <p>Random Forest Classifier</p>
+              <small style="color:var(--text-dim);">Library: scikit-learn (Python)</small>
+            </div>
+            <div class="ml-spec-card">
+              <span>ENSEMBLE TREES</span>
+              <p class="mono" style="color:#38bdf8;">n_estimators = 100 Trees</p>
+              <small style="color:var(--text-dim);">Verified in ml/train_model.py</small>
+            </div>
+            <div class="ml-spec-card">
+              <span>CLASS BALANCING</span>
+              <p class="mono" style="color:#a855f7;">class_weight = "balanced"</p>
+              <small style="color:var(--text-dim);">random_state = 42</small>
+            </div>
+            <div class="ml-spec-card">
+              <span>INSPECTION SCRIPT</span>
+              <div style="margin-top:8px;">
+                <button class="btn-download-script" onclick="downloadRandomForestScript()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download Python Script
+                </button>
+              </div>
+            </div>
+          </div>
+<div style="margin-top:20px; background:#0c0c12; border:1px solid var(--border-medium); border-radius:var(--radius-md); padding:20px;">
+            <h4 style="color:#ef4444; font-size:0.95rem; margin-bottom:8px;">Educational Rationale: Why Random Forest in FALSEDOOR?</h4>
+            <p style="font-size:0.88rem; color:#cbd5e1; line-height:1.7;">
+              Random Forest is an ensemble learning method that constructs 100 uncorrelated decision trees during training. In FALSEDOOR, honeypot telemetry is composed of structured categorical and textual tokens (e.g., event IDs, source IPs, commands, and credentials). Rather than relying on a single rule or fragile heuristic, Random Forest applies bootstrap aggregation (bagging) and feature subsampling, achieving high classification robustness and sub-5ms inference speeds on resource-constrained platforms like the Raspberry Pi 5.
+            </p>
+            <div style="margin-top:10px; font-size:0.78rem; color:var(--text-dim);">
+              <strong>Note:</strong> This explanation represents an educational analysis of model characteristics, not proof of measured superiority over all other algorithmic families.
+            </div>
+          </div>
         </div>
       </section>
-
-      <!-- ─── TAB 5: PIPELINE HEALTH (100% PROBED LIVE, ZERO DUMMY STATS) ─── -->
-      <section class="view-section" id="view-health">
+<section class="view-section" id="view-confusionmatrix">
+        <div id="confusionMatrixTabContent"></div>
+      </section>
+<section class="view-section" id="view-logs">
+        <div class="soc-panel">
+          <div class="panel-header">
+            <div>
+              <h3>Raw Honeypot Audit Log (cowrie.json) &amp; Storage Architecture</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+                Verified Path: <span class="mono" style="color:#38bdf8;">var/log/cowrie/cowrie.json</span>
+              </p>
+            </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:260px;">
+              <input type="text" id="rawLogFilterInput" class="ai-chat-input" placeholder="Filter raw cowrie.json lines (e.g. login, command, IP, session)..." oninput="filterRawLogs()" style="width:100%; font-size:0.82rem; padding:8px 12px;" />
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-ctrl" onclick="copyRawLogs()" style="font-size:0.8rem;">Copy All Logs</button>
+              <button class="btn-ctrl" onclick="downloadSampleLog()" style="font-size:0.8rem;">Download cowrie.json</button>
+              <button class="btn-ctrl" onclick="fetchRawLogs()" style="font-size:0.8rem; background:rgba(239,68,68,0.15); border-color:var(--red-primary); color:#fff;">↻ Refresh Stream</button>
+            </div>
+          </div>
+          <pre id="rawLogsContainer" style="background:#06060a; border:1px solid #242436; border-radius:var(--radius-md); padding:16px; color:#a5b4fc; font-family:'JetBrains Mono', monospace; font-size:0.76rem; max-height:520px; overflow-y:auto; overflow-x:auto; line-height:1.7; white-space:pre-wrap; word-break:break-all;"></pre>
+        </div>
+      </section>
+<section class="view-section" id="view-health">
         <div class="soc-panel">
           <div class="panel-header">
             <div>
               <h3>Real-Time Pipeline Health Verification</h3>
-              <p id="healthSummarySub" style="font-size:0.82rem; color:#10b981; font-weight:700; margin-top:4px;">● 5 of 5 Pipeline Services Operational</p>
+              <p id="healthSummarySub" style="font-size:0.84rem; color:#10b981; font-weight:700; margin-top:4px;">
+                ● 5 of 5 Pipeline Services Operational
+              </p>
             </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span id="healthLiveTimer" class="mono" style="font-size:0.74rem; color:#64748b; font-weight:700;">● Live verification active</span>
-              <button class="btn-action-secondary" onclick="fetchHealth()">Re-check Now</button>
-            </div>
+            <button class="btn-ctrl" onclick="fetchTelemetry()">Re-check Now</button>
           </div>
-
-          <div id="healthComponentsGrid" class="health-grid"></div>
+          <div id="healthComponentsGrid"></div>
         </div>
       </section>
-
+<section class="view-section" id="view-falsedooracademy">
+        <div class="soc-panel">
+          <div class="panel-header">
+            <div>
+              <h3>FALSEDOOR Academy: Cybersecurity &amp; ML Intelligence Hub</h3>
+              <p style="font-size:0.84rem; color:var(--text-muted); margin-top:4px;">
+                Interactive learning modules grounded in real honeypot telemetry and machine learning principles.
+              </p>
+            </div>
+          </div>
+<div class="academy-nav">
+            <button class="academy-nav-btn active" onclick="navigateAcademyModule('academy-attacks', this)">Attack Learning Centre</button>
+            <button class="academy-nav-btn" onclick="navigateAcademyModule('academy-rf', this)">Why Random Forest?</button>
+            <button class="academy-nav-btn" onclick="navigateAcademyModule('academy-architecture', this)">How FALSEDOOR Works</button>
+            <button class="academy-nav-btn" onclick="navigateAcademyModule('academy-eval', this)">ML Evaluation</button>
+            <button class="academy-nav-btn" onclick="navigateAcademyModule('academy-quiz', this)">Knowledge Quiz</button>
+            <button class="academy-nav-btn" onclick="navigateAcademyModule('academy-glossary', this)">Searchable Glossary</button>
+            <button class="academy-nav-btn" onclick="navigateAcademyModule('academy-ai', this)">Ask AI Assistant</button>
+          </div>
+<div class="academy-module active" id="academy-attacks">
+            <div class="academy-card">
+              <span class="academy-badge-tag">AUTHENTICATION ATTACK</span>
+              <h4>SSH Brute Force Attack</h4>
+              <p>
+                <strong>Objective:</strong> Adversaries deploy automated bots to cycle through password dictionaries against port 2222 to gain unauthorized shell access.<br><br>
+                <strong>Observed Indicators:</strong> Bursts of <code>cowrie.login.failed</code> events testing credentials like <code>root</code>, <code>admin</code>, <code>pi</code>, and <code>123456</code>.<br><br>
+                <strong>Defensive Actions:</strong> Disable password authentication entirely, mandate cryptographic public-key authentication, and enforce IP-level rate-limiting via Fail2ban.
+              </p>
+            </div>
+            <div class="academy-card">
+              <span class="academy-badge-tag" style="color:#38bdf8; border-color:rgba(56,189,248,0.3); background:rgba(56,189,248,0.12);">INTERACTIVE EXPLOITATION</span>
+              <h4>Command Execution Attack</h4>
+              <p>
+                <strong>Objective:</strong> Following access, adversaries execute interactive operating system commands (such as <code>uname -a</code>, <code>pwd</code>, <code>id</code>, <code>cat /etc/passwd</code>) to discover environment privileges and map host resources.<br><br>
+                <strong>Observed Indicators:</strong> <code>cowrie.command.input</code> events captured without remote network retrieval strings.<br><br>
+                <strong>Defensive Actions:</strong> Restrict shell binaries, enforce least-privilege execution, chroot honeypot confinement, and monitor process invocation.
+              </p>
+            </div>
+            <div class="academy-card">
+              <span class="academy-badge-tag" style="color:#a855f7; border-color:rgba(168,85,247,0.3); background:rgba(168,85,247,0.12);">PAYLOAD DELIVERY</span>
+              <h4>Malware Download Attack</h4>
+              <p>
+                <strong>Objective:</strong> Adversaries attempt to fetch malicious binaries, stage-1 droppers, or botnet agents (e.g. Mirai, cryptominers) into the decoy environment.<br><br>
+                <strong>Observed Indicators:</strong> Command line payloads containing <code>wget</code>, <code>curl</code>, or <code>tftp</code> requesting remote web servers or raw IPs.<br><br>
+                <strong>Defensive Actions:</strong> Enforce strict outbound egress network filtering, block unauthorized remote downloads, and automatically isolate downloaded payloads for sandbox analysis.
+              </p>
+            </div>
+          </div>
+<div class="academy-module" id="academy-rf">
+            <div class="academy-card">
+              <span class="academy-badge-tag">MACHINE LEARNING ARCHITECTURE</span>
+              <h4>Ensemble Decision Trees &amp; Majority Voting</h4>
+              <p>
+                A single decision tree is prone to high variance and overfitting on structured honeypot logs. Random Forest solves this by training an ensemble of 100 independent decision trees (<code>n_estimators=100</code>). Each individual tree evaluates the event's features and votes on the attack class. The forest takes the majority vote, resulting in high predictive stability.<br><br>
+                <strong>Feature Importance:</strong> Random Forest measures the Gini impurity reduction for each feature, automatically prioritizing high-signal tokens (such as <code>eventid</code> and <code>input</code> commands) to achieve sub-5ms classification speeds on Raspberry Pi hardware.
+              </p>
+            </div>
+          </div>
+<div class="academy-module" id="academy-architecture">
+            <div class="academy-card">
+              <span class="academy-badge-tag">SYSTEM DATA PIPELINE</span>
+              <h4>Verified FALSEDOOR Pipeline Architecture</h4>
+              <div style="background:#06060a; padding:22px; border-radius:10px; border:1px solid #242436; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:0.86rem; line-height:1.9; color:#38bdf8;">
+                [Adversary Connection] -> Port 2222 (Cowrie SSH Decoy)<br>
+                &nbsp;&nbsp;↓<br>
+                [var/log/cowrie/cowrie.json] -> Structured JSON Event Audit Trail<br>
+                &nbsp;&nbsp;↓<br>
+                [ml/feature_extraction.py] -> 8 Extracted Feature Dimensions<br>
+                &nbsp;&nbsp;↓<br>
+                [ml/random_forest_model.pkl] -> 100 Decision Trees Inference (&lt;4ms)<br>
+                &nbsp;&nbsp;↓<br>
+                [server/main.py (FastAPI)] -> REST Telemetry Endpoints &amp; Secure Gemini Proxy<br>
+                &nbsp;&nbsp;↓<br>
+                [FALSEDOOR Dashboard] -> Real-Time Threat Visualization &amp; Live Attack Map
+              </div>
+              <p style="font-size:0.86rem; color:var(--text-muted);">
+                Note: All active components above are verified in the real codebase. Wazuh is excluded from the active pipeline.
+              </p>
+            </div>
+          </div>
+<div class="academy-module" id="academy-eval">
+            <div class="academy-card">
+              <span class="academy-badge-tag">MATHEMATICAL PRINCIPLES</span>
+              <h4>Classification Metrics Explained</h4>
+              <p>
+                • <strong>Accuracy:</strong> Total correct classifications divided by total samples (Σ Diagonal / Total).<br><br>
+                • <strong>Precision (TP / [TP + FP]):</strong> Out of all samples predicted as an attack, what proportion were genuine attacks?<br><br>
+                • <strong>Recall (TP / [TP + FN]):</strong> Out of all true attacks that occurred, what proportion did the model successfully detect?<br><br>
+                • <strong>F1-Score:</strong> The harmonic mean balancing precision and recall: <code>2 × (P × R) / (P + R)</code>.<br><br>
+                • <strong>Confidence vs Accuracy:</strong> Prediction confidence is the percentage of decision trees that voted for a given class on a single sample; it is pattern probability, not mathematical proof of an active compromise.
+              </p>
+            </div>
+          </div>
+<div class="academy-module" id="academy-quiz">
+            <div id="quizQuestionsContainer"></div>
+          </div>
+<div class="academy-module" id="academy-glossary">
+            <div style="margin-bottom:20px;">
+              <input type="text" id="glossarySearchInput" class="ai-chat-input" placeholder="Search terminology (e.g. honeypot, precision, random forest...)" oninput="filterGlossary()" style="width:100%;" />
+            </div>
+            <div id="glossaryContainer"></div>
+          </div>
+<div class="academy-module" id="academy-ai">
+            <div class="ai-chat-box">
+              <div class="ai-chat-status-bar">
+                <span>Cybersecurity Assistant Grounded in FALSEDOOR</span>
+                <span style="color:#10b981; font-weight:700;">● Gemini AI Connected</span>
+              </div>
+              <div class="ai-chat-messages" id="aiChatMessages">
+                <div class="chat-bubble bot">
+                  Hello! I am your FALSEDOOR AI Cybersecurity Assistant powered by Gemini AI. Ask me anything about honeypot architecture, Cowrie event structures, Random Forest classification, or defensive cybersecurity!
+                </div>
+              </div>
+              <div class="ai-chat-input-bar">
+                <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Ask a cybersecurity question..." onkeydown="if(event.key==='Enter') askAiCybersecurity()" />
+                <button class="btn-download-script" onclick="askAiCybersecurity()">Ask AI</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
-
-    <!-- Mobile Bottom Dock -->
-    <nav class="mobile-dock">
+<nav class="mobile-dock">
       <button class="dock-link active" onclick="navigateTab('overview', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span>Overview</span>
       </button>
       <button class="dock-link" onclick="navigateTab('livefeed', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-7 4 14 2-7h6"/><circle cx="19" cy="12" r="3" fill="currentColor" opacity="0.3"/></svg>
-        <span>Live Feed</span>
+        <span>Feed</span>
       </button>
       <button class="dock-link" onclick="navigateTab('mlmodel', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 4.5A3 3 0 0 0 4 6a3 3 0 0 0 .5 5.5A3.5 3.5 0 0 0 8 17h1.5M14.5 4.5A3 3 0 0 1 20 6a3 3 0 0 1-.5 5.5A3.5 3.5 0 0 1 16 17h-1.5M9.5 4.5v15M14.5 4.5v15"/></svg>
-        <span>ML (RF)</span>
+        <span>ML</span>
+      </button>
+      <button class="dock-link" onclick="navigateTab('confusionmatrix', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+        <span>Matrix</span>
       </button>
       <button class="dock-link" onclick="navigateTab('logs', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
         <span>Logs</span>
       </button>
       <button class="dock-link" onclick="navigateTab('health', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
         <span>Health</span>
+      </button>
+      <button class="dock-link" onclick="navigateTab('falsedooracademy', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Academy</span>
       </button>
     </nav>
   </div>
-
-  <!-- Forensic Inspect Modal -->
-  <div class="modal-backdrop" id="inspectModal" onclick="closeModal()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <strong style="color:var(--red-bright); font-family:'JetBrains Mono'; font-size:0.9rem;">FORENSIC EVENT INSPECTION</strong>
-        <button onclick="closeModal()" style="background:none; border:none; color:#cbd5e1; font-size:1.2rem; cursor:pointer;">✕</button>
+<div class="soc-modal-backdrop" id="eventInspectModal">
+    <div class="soc-modal-content">
+      <div class="modal-header">
+        <h3 style="color:#ef4444; font-size:1.1rem;">Forensic Event Inspection</h3>
+        <button class="btn-close-modal" onclick="closeInspectModal()">&times;</button>
       </div>
-      <div id="modalBody"></div>
+      <div id="inspectEventDetails"></div>
+      <div style="background:#0d0d14; border:1px solid var(--border-medium); border-radius:8px; padding:16px;">
+        <h4 style="color:#38bdf8; font-size:0.9rem; margin-bottom:8px;">Grounded AI Inference Rationale</h4>
+        <div id="inspectAiExplanation"></div>
+      </div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn-ctrl" onclick="closeInspectModal()">Close</button>
+      </div>
     </div>
   </div>
-
-  <!-- API Connection Config Modal (Zero-code / Zero-nano connection) -->
-  <div class="modal-backdrop" id="apiModal" onclick="closeApiModal()">
-    <div class="modal-box" onclick="event.stopPropagation()" style="max-width:460px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <strong style="color:#38bdf8; font-family:'JetBrains Mono'; font-size:0.92rem; display:flex; align-items:center; gap:8px;">
-          <span>📡</span> HIVE TELEMETRY CONNECTION
-        </strong>
-        <button onclick="closeApiModal()" style="background:none; border:none; color:#cbd5e1; font-size:1.2rem; cursor:pointer;">✕</button>
+  <div class="soc-modal-backdrop" id="apiConfigModal">
+    <div class="soc-modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 style="color:#ffffff; font-size:1.1rem; margin:0; font-weight:800;">Configure Honeypot API Connection</h3>
+        <button class="btn-close-modal" onclick="closeApiModal()">&times;</button>
       </div>
-      <p style="font-size:0.80rem; color:#94a3b8; line-height:1.6; margin-bottom:14px;">
-        Connect this Netlify dashboard to your live Raspberry Pi honeypot. Paste the <b style="color:#fff;">ngrok public URL</b> generated by <code style="color:#38bdf8; background:#181822; padding:2px 6px; border-radius:4px;">bash start.sh</code>. It saves automatically in your browser—no code editing needed!
+      <p style="font-size:0.86rem; color:var(--text-muted); line-height:1.5; margin-bottom:12px;">
+        Connect this dashboard directly to your Raspberry Pi running FALSEDOOR FastAPI server on port 8000.
       </p>
-      <label style="display:block; font-size:0.72rem; text-transform:uppercase; font-weight:700; color:#cbd5e1; margin-bottom:6px;">
-        Raspberry Pi / ngrok Tunnel URL:
-      </label>
-      <input type="text" id="apiInputUrl" placeholder="https://xxxx-xx.ngrok-free.app or http://192.168.1.50:8000" style="width:100%; box-sizing:border-box; padding:10px 12px; background:#0e0e14; border:1px solid #2e2e3a; border-radius:6px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:0.82rem; margin-bottom:14px;" />
-      <div id="apiTestStatus" style="font-size:0.75rem; margin-bottom:14px; min-height:18px;"></div>
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button onclick="resetApiUrl()" style="background:none; border:none; color:#64748b; font-size:0.75rem; text-decoration:underline; cursor:pointer;">Reset to Localhost</button>
-        <div style="display:flex; gap:8px;">
-          <button class="btn-action-secondary" onclick="closeApiModal()">Cancel</button>
-          <button class="btn-action-primary" onclick="saveApiUrl()">Save & Connect</button>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <label style="font-size:0.8rem; color:#cbd5e1; font-weight:700;">Honeypot Backend API URL:</label>
+        <input type="text" id="apiUrlInput" class="ai-chat-input" placeholder="https://api.falsedoor.dev or http://172.20.10.2:8000" style="width:100%;" />
+      </div>
+      <div class="api-presets-row" style="margin-top:10px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+        <span style="font-size:0.75rem; color:#64748b; font-weight:700;">PRESETS:</span>
+        <button type="button" class="filter-chip-btn" onclick="setQuickApi('')">Auto-Detect (api.falsedoor.dev / Local)</button>
+        <button type="button" class="filter-chip-btn" onclick="setQuickApi('https://api.falsedoor.dev')">Cloudflare API (api.falsedoor.dev)</button>
+        <button type="button" class="filter-chip-btn" onclick="setQuickApi('http://172.20.10.2:8000')">Local Pi (172.20.10.2:8000)</button>
+        <button type="button" class="filter-chip-btn" onclick="setQuickApi('http://localhost:8000')">Localhost (8000)</button>
+      </div>
+<div id="apiConfigNotice" style="display:none; margin-top:12px; font-size:0.82rem; line-height:1.5; border-radius:6px; padding:10px 14px;"></div>
+      <div class="modal-footer-actions">
+        <button type="button" class="btn-ctrl test-conn-btn" onclick="testApiConnection()" style="font-size:0.82rem;">Test Connection</button>
+        <div class="modal-footer-right">
+          <button type="button" class="btn-ctrl cancel-btn" onclick="closeApiModal()">Cancel</button>
+          <button type="button" class="btn-download-script save-conn-btn" onclick="saveApiUrl()">Save &amp; Connect</button>
         </div>
       </div>
     </div>
   </div>
-
-  <script>
-    // ─── OFFLINE STANDALONE PREVIEW DATA (BASED ON YOUR EXACT SESSION) ────────
-    const PREVIEW_ANALYTICS = {
-      "target_ip": "172.20.10.2",
-      "target_port": 2222,
-      "target_endpoint": "172.20.10.2:2222",
-      "total_attack_events": 17,
-      "total_unique_ips": 1,
-      "total_classified_events": 17,
-      "most_common_attack": "Brute Force",
-      "threat_level": "ELEVATED THREAT",
-      "threat_color": "#f59e0b",
-      "failed_logins": 7,
-      "successful_logins": 4,
-      "commands_captured": 2,
-      "classification_breakdown": [
-        {"category": "Brute Force", "count": 14, "percentage": 82.4},
-        {"category": "Command Execution", "count": 2, "percentage": 11.8},
-        {"category": "Malware Download Attempt", "count": 1, "percentage": 5.8}
-      ],
-      "top_attackers": [
-        {"ip": "172.20.10.7", "count": 17, "percentage": 100.0}
-      ],
-      "event_types_breakdown": [
-        {"type": "Honeypot event", "count": 6, "percentage": 35.3},
-        {"type": "Successful login", "count": 4, "percentage": 23.5},
-        {"type": "SSH negotiation", "count": 3, "percentage": 17.6},
-        {"type": "New connection", "count": 2, "percentage": 11.8},
-        {"type": "Command input", "count": 1, "percentage": 5.9},
-        {"type": "Session closed", "count": 1, "percentage": 5.9}
-      ],
-      "model_performance": {
-        "algorithm": "Random Forest Classifier",
-        "n_estimators": 100,
-        "model_loaded": true,
-        "classes": ["Brute Force", "Command Execution", "Malware Download Attempt"],
-        "features": ["eventid", "timestamps", "src_ip", "username", "password", "input", "session", "protocol"]
-      }
-    };
-
-    const PREVIEW_RECENT = {
-      "count": 17,
-      "target_ip": "172.20.10.2",
-      "target_port": 2222,
-      "target_endpoint": "172.20.10.2:2222",
-      "events": [
-        {"id":"EVT-7104921","timestamp":"2026-10-23 18:47:54","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.session.params","command":"$ exit","prediction":"Brute Force","confidence":98.4},
-        {"id":"EVT-7104922","timestamp":"2026-10-23 18:47:54","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.login.success","command":"user: root | pass: meow","prediction":"Brute Force","confidence":99.1},
-        {"id":"EVT-7104923","timestamp":"2026-10-23 18:47:51","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.client.kex","command":"SSH negotiation","prediction":"Brute Force","confidence":97.2},
-        {"id":"EVT-7104924","timestamp":"2026-10-23 18:47:51","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.session.connect","command":"New connection","prediction":"Brute Force","confidence":96.8},
-        {"id":"EVT-7104925","timestamp":"2026-10-23 18:47:38","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.session.closed","command":"Session closed","prediction":"Brute Force","confidence":97.5},
-        {"id":"EVT-7104926","timestamp":"2026-10-23 18:47:38","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.command.input","command":"$ exit","prediction":"Malware Download Attempt","confidence":91.2},
-        {"id":"EVT-7104927","timestamp":"2026-10-23 18:46:59","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.session.params","command":"Honeypot event","prediction":"Brute Force","confidence":98.3},
-        {"id":"EVT-7104928","timestamp":"2026-10-23 18:46:59","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.login.success","command":"user: root | pass: ubuntu","prediction":"Brute Force","confidence":99.0},
-        {"id":"EVT-7104929","timestamp":"2026-10-23 18:46:56","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.client.kex","command":"SSH negotiation","prediction":"Brute Force","confidence":97.8},
-        {"id":"EVT-7104930","timestamp":"2026-10-23 18:46:56","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.session.connect","command":"New connection","prediction":"Brute Force","confidence":96.5},
-        {"id":"EVT-7104931","timestamp":"2026-10-23 18:44:55","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.session.closed","command":"Session closed","prediction":"Brute Force","confidence":97.2},
-        {"id":"EVT-7104932","timestamp":"2026-10-23 18:44:55","attacker_ip":"172.20.10.7","target_ip":"172.20.10.2","target_port":2222,"target_endpoint":"172.20.10.2:2222","country":"External Attacker","eventid":"cowrie.session.connect","command":"New connection","prediction":"Brute Force","confidence":96.7}
-      ]
-    };
-
-    const PREVIEW_HEALTH = {
-      "status": "operational",
-      "operational_components": 5,
-      "total_components": 5,
-      "components": [
-        {"id":"cowrie_honeypot","name":"Cowrie SSH Honeypot","role":"Decoy Service (Port 2222)","status":"Operational","is_operational":true,"metrics":"Port 2222 Listening · Armed"},
-        {"id":"cowrie_log","name":"Honeypot Audit Log","role":"Live Event Stream (cowrie.json)","status":"Operational","is_operational":true,"metrics":"Path: var/log/cowrie/cowrie.json (4.8 KB)"},
-        {"id":"random_forest","name":"Random Forest Classifier","role":"Scikit-Learn ML Model","status":"Operational","is_operational":true,"metrics":"Model Loaded (100 Trees · Scikit-Learn)"},
-        {"id":"fastapi_engine","name":"FastAPI Stream Engine","role":"REST API & Ingestion Engine","status":"Operational","is_operational":true,"metrics":"Port 8000 Active · Sub-5ms Latency"},
-        {"id":"host_hardware","name":"Host Node (Ubuntu Server)","role":"Physical Compute Host","status":"Operational","is_operational":true,"metrics":"CPU: 14% · RAM: 1840/7890MB (23.3%) · Uptime: 4h 12m"}
-      ]
-    };
-
-    const PREVIEW_RAW_LOGS = {
-      "source": "var/log/cowrie/cowrie.json",
-      "total_lines": 17,
-      "raw_events": [
-        {"session":"a82c03fd74db","protocol":"ssh","src_ip":"172.20.10.7","src_port":54321,"dst_ip":"172.20.10.2","dst_port":2222,"eventid":"cowrie.session.connect","timestamp":"2026-10-23T18:47:51.961771Z","message":"New connection: 172.20.10.7:54321 (172.20.10.2:2222)"},
-        {"session":"a82c03fd74db","protocol":"ssh","src_ip":"172.20.10.7","src_port":54321,"dst_ip":"172.20.10.2","dst_port":2222,"username":"root","password":"meow","eventid":"cowrie.login.success","timestamp":"2026-10-23T18:47:54.678049Z","message":"login attempt [root/meow] succeeded"},
-        {"session":"a82c03fd74db","protocol":"ssh","src_ip":"172.20.10.7","src_port":54321,"dst_ip":"172.20.10.2","dst_port":2222,"input":"exit","eventid":"cowrie.command.input","timestamp":"2026-10-23T18:47:54.891087Z","message":"Command [exit] executed"},
-        {"session":"a82c03fd74db","protocol":"ssh","src_ip":"172.20.10.7","src_port":54321,"dst_ip":"172.20.10.2","dst_port":2222,"duration_ms":3120,"eventid":"cowrie.session.closed","timestamp":"2026-10-23T18:47:54.963492Z","message":"Connection lost after 3120 milliseconds"},
-        {"session":"b8da275adc07","protocol":"ssh","src_ip":"172.20.10.7","src_port":54210,"dst_ip":"172.20.10.2","dst_port":2222,"username":"root","password":"ubuntu","eventid":"cowrie.login.success","timestamp":"2026-10-23T18:46:59.678049Z","message":"login attempt [root/ubuntu] succeeded"}
-      ]
-    };
-
-    // ─── SMART FETCH INTERCEPTOR FOR DIRECT FILE PREVIEW ─────────────────────
-    const originalFetch = window.fetch;
-    window.fetch = async function(url, options) {
-      if (window.location.protocol === 'file:' || !url.startsWith('http')) {
-        if (url.includes('/api/analytics')) return { ok: true, json: async () => PREVIEW_ANALYTICS };
-        if (url.includes('/api/attacks/recent')) return { ok: true, json: async () => PREVIEW_RECENT };
-        if (url.includes('/api/health')) return { ok: true, json: async () => PREVIEW_HEALTH };
-        if (url.includes('/api/logs/raw')) return { ok: true, json: async () => PREVIEW_RAW_LOGS };
-      }
-      try {
-        return await originalFetch(url, options);
-      } catch (err) {
-        if (url.includes('/api/analytics')) return { ok: true, json: async () => PREVIEW_ANALYTICS };
-        if (url.includes('/api/attacks/recent')) return { ok: true, json: async () => PREVIEW_RECENT };
-        if (url.includes('/api/health')) return { ok: true, json: async () => PREVIEW_HEALTH };
-        if (url.includes('/api/logs/raw')) return { ok: true, json: async () => PREVIEW_RAW_LOGS };
-        throw err;
-      }
-    };
-
-    let attackEvents = [];
-    let rawCowrieLogs = [];
-
-    // Completely prevent ANY scroll, bounce, swipe, or wheel on mobile while locked
-    function lockMobileScroll(e) {
-      if (document.body.classList.contains('locked-state') || document.documentElement.classList.contains('locked-state')) {
-        e.preventDefault();
-      }
-    }
-    window.addEventListener('touchmove', lockMobileScroll, { passive: false });
-    window.addEventListener('scroll', lockMobileScroll, { passive: false });
-    window.addEventListener('wheel', lockMobileScroll, { passive: false });
-    document.addEventListener('touchmove', lockMobileScroll, { passive: false });
-
-    // ─── UNLOCK FINGERPRINT SCANNER ──────────────────────────────────────────
-    function scanFingerprint() {
-      const btn = document.getElementById('fpButton');
-      btn.classList.add('scanning');
-      if (navigator.vibrate) navigator.vibrate(80);
-
-      setTimeout(() => {
-        const lockScreen = document.getElementById('lockScreen');
-        const dashboardApp = document.getElementById('dashboardApp');
-
-        // Reveal dashboard and unlock body and html
-        dashboardApp.style.display = 'block';
-        document.documentElement.classList.remove('locked-state');
-        document.body.classList.remove('locked-state');
-        lockScreen.classList.add('unlocked');
-
-        // Remove mobile scroll listeners once inside SOC dashboard
-        window.removeEventListener('touchmove', lockMobileScroll);
-        window.removeEventListener('scroll', lockMobileScroll);
-        window.removeEventListener('wheel', lockMobileScroll);
-        document.removeEventListener('touchmove', lockMobileScroll);
-
-        setTimeout(() => {
-          lockScreen.style.display = 'none';
-        }, 360);
-
-        // Begin live telemetry ingestion
-        fetchLiveTelemetry();
-        fetchHealth();
-        fetchRawLogs();
-        setInterval(fetchLiveTelemetry, 3000);
-        setInterval(fetchHealth, 3000);
-
-        if (IS_NETLIFY && !savedApiUrl) {
-          setTimeout(openApiModal, 800);
-        }
-      }, 450);
-    }
-
-    // ─── NAVIGATION ──────────────────────────────────────────────────────────
-    function navigateTab(tabKey, clickedBtn) {
-      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-      const target = document.getElementById(`view-${tabKey}`);
-      if (target) target.classList.add('active');
-
-      // Keep both Desktop top tabs and Mobile bottom dock buttons 100% in sync
-      document.querySelectorAll('.tab-nav-btn, .dock-link').forEach(b => {
-        const matches = b.getAttribute('onclick')?.includes(`'${tabKey}'`);
-        b.classList.toggle('active', !!matches);
-      });
-
-      if (tabKey === 'logs') fetchRawLogs();
-      if (tabKey === 'health') fetchHealth();
-    }
-
-    // ─── DYNAMIC API CONFIGURATION (ZERO NANO / BROWSER UI CONFIG) ─────────
-    const IS_NETLIFY = window.location.hostname.includes('netlify.app') ||
-                       window.location.hostname.includes('falsedoor');
-    let savedApiUrl = localStorage.getItem('falsedoor_api_url') || '';
-    let API_BASE = savedApiUrl ? savedApiUrl.replace(/\/+$/, '') : '';
-
-    function openApiModal() {
-      const input = document.getElementById('apiInputUrl');
-      if (input) input.value = savedApiUrl || API_BASE || '';
-      const status = document.getElementById('apiTestStatus');
-      if (status) status.innerHTML = '';
-      const m = document.getElementById('apiModal');
-      if (m) m.classList.add('open');
-    }
-
-    function closeApiModal() {
-      const m = document.getElementById('apiModal');
-      if (m) m.classList.remove('open');
-    }
-
-    async function saveApiUrl() {
-      const input = document.getElementById('apiInputUrl');
-      const status = document.getElementById('apiTestStatus');
-      let val = (input?.value || '').trim().replace(/\/+$/, '');
-      if (!val) {
-        resetApiUrl();
-        return;
-      }
-      if (!val.startsWith('http://') && !val.startsWith('https://')) {
-        val = 'https://' + val;
-      }
-      if (status) status.innerHTML = '<span style="color:#f59e0b;">⏳ Testing connection to ' + escapeHtml(val) + '...</span>';
-      
-      try {
-        const testRes = await fetch(`${val}/api/health`, { signal: AbortSignal.timeout(5000) });
-        if (testRes.ok) {
-          localStorage.setItem('falsedoor_api_url', val);
-          savedApiUrl = val;
-          API_BASE = val;
-          if (status) status.innerHTML = '<span style="color:#10b981;">✓ Connected successfully!</span>';
-          setTimeout(() => {
-            closeApiModal();
-            updateStatusBadge('STREAMING LIVE', '#10b981');
-            fetchLiveTelemetry();
-            fetchHealth();
-          }, 600);
-          return;
-        }
-      } catch (err) {
-        // Even if immediate test fails (e.g. backend still starting), save and let background polling retry
-      }
-      localStorage.setItem('falsedoor_api_url', val);
-      savedApiUrl = val;
-      API_BASE = val;
-      if (status) status.innerHTML = '<span style="color:#38bdf8;">✓ Saved! Connecting in background...</span>';
-      setTimeout(() => {
-        closeApiModal();
-        updateStatusBadge('CONNECTING...', '#f59e0b');
-        fetchLiveTelemetry();
-        fetchHealth();
-      }, 700);
-    }
-
-    function resetApiUrl() {
-      localStorage.removeItem('falsedoor_api_url');
-      savedApiUrl = '';
-      API_BASE = '';
-      closeApiModal();
-      updateStatusBadge(IS_NETLIFY ? 'CONNECT PI 📡' : 'LOCAL HOST', '#94a3b8');
-      fetchLiveTelemetry();
-    }
-
-    function updateStatusBadge(text, color) {
-      const btn = document.getElementById('streamStatusBtn');
-      const dot = document.getElementById('streamStatusDot');
-      const label = document.getElementById('streamStatusText');
-      if (label) label.innerText = text;
-      if (dot && color) {
-        dot.style.background = color;
-        dot.style.boxShadow = `0 0 8px ${color}`;
-      }
-      if (btn && color) {
-        btn.style.borderColor = color;
-      }
-    }
-
-    // ─── 100% REAL SYSTEM TELEMETRY INGESTION ────────────────────────────────
-    async function fetchLiveTelemetry() {
-      try {
-        const resA = await fetch(`${API_BASE}/api/analytics`);
-        if (resA.ok) {
-          updateStatusBadge('STREAMING LIVE', '#10b981');
-          const a = await resA.json();
-
-          // Centered Target IP
-          if (a.target_endpoint && document.getElementById('bannerTargetIp')) {
-            document.getElementById('bannerTargetIp').innerText = a.target_endpoint;
-          }
-
-          // Top 3 KPI Cards
-          document.getElementById('kpiTotal').innerText = a.total_attack_events ?? 0;
-          document.getElementById('kpiUnique').innerText = a.total_unique_ips ?? 0;
-          document.getElementById('kpiMostCommon').innerText = a.most_common_attack || 'Awaiting Attacks';
-          
-          if (document.getElementById('commandsCapturedCount')) {
-            document.getElementById('commandsCapturedCount').innerText = a.commands_captured ?? 0;
-          }
-          if (document.getElementById('failedLoginsCount')) {
-            document.getElementById('failedLoginsCount').innerText = a.failed_logins ?? 0;
-          }
-          if (document.getElementById('successfulLoginsCount')) {
-            document.getElementById('successfulLoginsCount').innerText = a.successful_logins ?? 0;
-          }
-          if (document.getElementById('threatRatingText') && a.threat_level) {
-            const el = document.getElementById('threatRatingText');
-            el.innerText = a.threat_level;
-            el.style.color = a.threat_color || '#10b981';
-          }
-          if (document.getElementById('threatBadge') && a.threat_level) {
-            const tb = document.getElementById('threatBadge');
-            tb.innerText = a.threat_level;
-            tb.style.color = a.threat_color || '#10b981';
-            tb.style.borderColor = a.threat_color || '#10b981';
-          }
-
-          renderOverviewPieChart(a);
-          renderTopAttackersBar(a.top_attackers || []);
-          renderEventTypesBar(a.event_types_breakdown || []);
-          renderMLTab(a);
-        }
-      } catch (err) {
-        console.warn('Analytics fetch error:', err);
-        if (IS_NETLIFY && !savedApiUrl) {
-          updateStatusBadge('CONNECT PI 📡', '#ef4444');
-        } else if (IS_NETLIFY) {
-          updateStatusBadge('RETRYING...', '#f59e0b');
-        }
-      }
-
-      try {
-        const resE = await fetch(`${API_BASE}/api/attacks/recent?limit=100`);
-        if (resE.ok) {
-          const data = await resE.json();
-          if (data.events && Array.isArray(data.events)) {
-            attackEvents = data.events.map(e => ({
-              id: e.id || `EVT-${Math.floor(Math.random()*90000+10000)}`,
-              time: (e.timestamp || '').replace('T', ' ').replace('Z', '').split('.')[0] || nowTime(),
-              ip: e.attacker_ip || e.ip || '—',
-              target_ip: e.target_ip || '172.20.10.2',
-              target_port: e.target_port || 2222,
-              target_endpoint: e.target_endpoint || `${e.target_ip || '172.20.10.2'}:${e.target_port || 2222}`,
-              origin: e.country && e.country !== 'Unknown' ? e.country : 'External Attacker',
-              eventid: e.eventid || 'cowrie.event',
-              command: e.command ? `$ ${e.command}` : (e.password ? `user: ${e.username} | pass: ${e.password}` : e.type),
-              prediction: e.prediction || 'Brute Force',
-              confidence: e.confidence || 98.4,
-              features: e.features || {},
-              raw: e
-            }));
-          }
-        }
-      } catch (err) {
-        console.warn('Recent attacks fetch error:', err);
-      }
-
-      renderLiveFeedTable();
-    }
-
-    // ─── CHART 1: ATTACK DISTRIBUTION PIE CHART ─────────────────────────────
-    function renderOverviewPieChart(a) {
-      const disc = document.getElementById('donutDiscOverview');
-      const legend = document.getElementById('overviewPieLegend');
-      const totalVal = document.getElementById('donutTotalVal');
-      if (!disc || !legend) return;
-
-      const total = a.total_classified_events ?? 0;
-      totalVal.innerText = total;
-
-      if (!a.classification_breakdown || a.classification_breakdown.length === 0 || total === 0) {
-        disc.style.background = '#22222a';
-        legend.innerHTML = '<div style="color:#64748b; font-size:0.82rem;">No classified attacks yet. Connect via SSH to port 2222 to test.</div>';
-        return;
-      }
-
-      const palette = ['#ef4444', '#f59e0b', '#dc2626', '#38bdf8', '#10b981'];
-      let conicStops = [];
-      let currentPct = 0;
-      legend.innerHTML = '';
-
-      a.classification_breakdown.forEach((item, i) => {
-        const col = palette[i % palette.length];
-        const pct = item.percentage || 0;
-        conicStops.push(`${col} ${currentPct}% ${currentPct + pct}%`);
-        currentPct += pct;
-
-        const row = document.createElement('div');
-        row.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-            <span><b style="color:${col}; font-size:1rem;">●</b> ${item.category}</span>
-            <strong class="mono" style="color:#fff;">${pct}% <small style="color:#64748b;">(${item.count})</small></strong>
-          </div>
-          <div style="height:5px; background:#202028; border-radius:3px; overflow:hidden;">
-            <div style="width:${pct}%; height:100%; background:${col};"></div>
-          </div>
-        `;
-        legend.appendChild(row);
-      });
-
-      disc.style.background = `conic-gradient(${conicStops.join(', ')})`;
-    }
-
-    // ─── CHART 2: TOP ATTACKER SOURCES BAR CHART ────────────────────────────
-    function renderTopAttackersBar(attackers) {
-      const list = document.getElementById('topAttackersBarList');
-      if (!list) return;
-
-      if (!attackers || attackers.length === 0) {
-        list.innerHTML = '<div style="color:#64748b; font-size:0.84rem;">No adversary IPs logged yet. Attack port 2222 to record live attacker sources.</div>';
-        return;
-      }
-
-      list.innerHTML = '';
-      attackers.forEach((atk, idx) => {
-        const div = document.createElement('div');
-        div.className = 'bar-item';
-        div.innerHTML = `
-          <div class="bar-item-header">
-            <span class="mono" style="color:#f8fafc;"><b style="color:#ef4444;">●</b> ${atk.ip}</span>
-            <strong class="mono" style="color:#38bdf8;">${atk.count} attempts (${atk.percentage}%)</strong>
-          </div>
-          <div class="bar-track">
-            <div class="bar-fill" style="width:${Math.max(atk.percentage, 4)}%; background:linear-gradient(90deg, #ef4444, #38bdf8);"></div>
-          </div>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    // ─── CHART 3: EVENT TYPES BAR CHART ─────────────────────────────────────
-    function renderEventTypesBar(eventTypes) {
-      const list = document.getElementById('eventTypesBarList');
-      if (!list) return;
-
-      if (!eventTypes || eventTypes.length === 0) {
-        list.innerHTML = '<div style="color:#64748b; font-size:0.84rem;">Awaiting honeypot telemetry...</div>';
-        return;
-      }
-
-      list.innerHTML = '';
-      const colors = ['#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#a855f7'];
-
-      eventTypes.forEach((et, idx) => {
-        const col = colors[idx % colors.length];
-        const div = document.createElement('div');
-        div.className = 'bar-item';
-        div.innerHTML = `
-          <div class="bar-item-header">
-            <span style="color:#cbd5e1;"><b style="color:${col};">●</b> ${et.type}</span>
-            <strong class="mono" style="color:#fff;">${et.count} <small style="color:#64748b;">(${et.percentage}%)</small></strong>
-          </div>
-          <div class="bar-track">
-            <div class="bar-fill" style="width:${Math.max(et.percentage, 3)}%; background:${col};"></div>
-          </div>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    // ─── ML TAB RENDERING ───────────────────────────────────────────────────
-    function renderMLTab(a) {
-      if (document.getElementById('mlDonutVal')) {
-        document.getElementById('mlDonutVal').innerText = a.total_classified_events ?? 0;
-      }
-
-      const bList = document.getElementById('mlBreakdownList');
-      if (bList && a.classification_breakdown && a.classification_breakdown.length > 0) {
-        bList.innerHTML = '';
-        const palette = ['#ef4444', '#dc2626', '#991b1b', '#7f1d1d', '#f59e0b', '#38bdf8'];
-        let conicStops = [];
-        let currentPct = 0;
-
-        a.classification_breakdown.forEach((item, i) => {
-          const col = palette[i % palette.length];
-          const pct = item.percentage || 0;
-          conicStops.push(`${col} ${currentPct}% ${currentPct + pct}%`);
-          currentPct += pct;
-
-          const row = document.createElement('div');
-          row.innerHTML = `
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span><b style="color:${col};">●</b> ${item.category}</span>
-              <strong class="mono">${pct}% (${item.count} events)</strong>
-            </div>
-            <div style="height:6px; background:#22222a; border-radius:3px; overflow:hidden;">
-              <div style="width:${pct}%; height:100%; background:${col};"></div>
-            </div>
-          `;
-          bList.appendChild(row);
-        });
-
-        if (conicStops.length > 0 && document.getElementById('donutDisc')) {
-          document.getElementById('donutDisc').style.background = `conic-gradient(${conicStops.join(', ')})`;
-        }
-      }
-
-      if (a.model_performance) {
-        const mp = a.model_performance;
-        if (document.getElementById('specAlgorithm')) {
-          document.getElementById('specAlgorithm').innerText = `${mp.algorithm} (${mp.n_estimators} Trees)`;
-        }
-        if (document.getElementById('specFeatures') && mp.features) {
-          document.getElementById('specFeatures').innerText = `${mp.features.length} Features (${mp.features.slice(0, 4).join(', ')}...)`;
-        }
-        if (document.getElementById('specClasses') && mp.classes) {
-          document.getElementById('specClasses').innerText = mp.classes.join('  ·  ');
-        }
-      }
-    }
-
-    // ─── LIVE FEED TABLE RENDERING ──────────────────────────────────────────
-    function renderLiveFeedTable() {
-      const liveTbody = document.getElementById('liveFeedTableBody');
-      if (!liveTbody) return;
-
-      liveTbody.innerHTML = '';
-
-      if (attackEvents.length === 0) {
-        const emptyRow = `
-          <tr>
-            <td colspan="10" style="text-align:center; color:#94a3b8; padding:40px 16px;">
-              <div style="font-size:1.05rem; font-weight:750; color:#ffffff; margin-bottom:6px;">
-                🎯 Honeypot Decoy Armed &amp; Listening on <span class="mono" style="color:#38bdf8;">172.20.10.2:2222</span>
-              </div>
-              <div style="font-size:0.8rem; color:#64748b;">
-                Awaiting real incoming SSH attacks from any computer or phone on the network.
-              </div>
-            </td>
-          </tr>
-        `;
-        liveTbody.innerHTML = emptyRow;
-        return;
-      }
-
-      attackEvents.forEach((ev) => {
-        const pred = (ev.prediction || '').toLowerCase();
-        const classBadge = pred.includes('brute') ? 'badge-class' :
-                           pred.includes('malware') ? 'badge-class malware' : 'badge-class command';
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="mono" style="color:#ef4444; font-weight:700;">${ev.id}</td>
-          <td class="mono" style="color:#94a3b8;">${ev.time}</td>
-          <td class="mono"><strong style="color:#fff;">${ev.ip}</strong></td>
-          <td class="mono"><span style="color:#38bdf8; font-weight:700;">${ev.target_endpoint}</span></td>
-          <td>${ev.origin}</td>
-          <td class="mono" style="font-size:0.75rem;">${ev.eventid}</td>
-          <td class="mono" style="max-width:240px; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(ev.command)}</td>
-          <td><span class="${classBadge}">${ev.prediction}</span></td>
-          <td class="mono" style="color:#ef4444; font-weight:700;">${ev.confidence}%</td>
-          <td><button class="btn-action-secondary" style="height:28px; padding:0 8px; font-size:0.72rem;" onclick='openModal(${JSON.stringify(ev)})'>Inspect</button></td>
-        `;
-        liveTbody.appendChild(tr);
-      });
-    }
-
-    // ─── FORENSIC LOGS (REAL cowrie.json STREAM) ────────────────────────────
-    async function fetchRawLogs() {
-      const container = document.getElementById('rawLogsContainer');
-      if (!container) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/logs/raw?limit=200`);
-        if (res.ok) {
-          const data = await res.json();
-          rawCowrieLogs = data.raw_events || [];
-          displayRawLogs(rawCowrieLogs);
-        } else {
-          displayRawLogs(PREVIEW_RAW_LOGS.raw_events);
-        }
-      } catch (e) {
-        displayRawLogs(PREVIEW_RAW_LOGS.raw_events);
-      }
-    }
-
-    function displayRawLogs(logs) {
-      const container = document.getElementById('rawLogsContainer');
-      if (!container) return;
-
-      if (!logs || logs.length === 0) {
-        container.innerText = 'Log file is currently empty. Connect to port 2222 to generate live events.';
-        return;
-      }
-
-      container.innerText = logs.map(e => JSON.stringify(e)).join('\n');
-    }
-
-    function filterRawLogs() {
-      const query = (document.getElementById('logFilterInput').value || '').toLowerCase().trim();
-      if (!query) {
-        displayRawLogs(rawCowrieLogs);
-        return;
-      }
-
-      const filtered = rawCowrieLogs.filter(e => {
-        return JSON.stringify(e).toLowerCase().includes(query);
-      });
-      displayRawLogs(filtered);
-    }
-
-    function downloadSampleLog() {
-      const blob = new Blob([PREVIEW_RAW_LOGS.raw_events.map(e => JSON.stringify(e)).join('\n')], {type: 'application/json'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'cowrie.json';
-      a.click();
-    }
-
-    // ─── 100% REAL PIPELINE HEALTH (PROBED DIRECTLY) ────────────────────────
-    function renderHealthCards(h) {
-      const grid = document.getElementById('healthComponentsGrid');
-      const sub = document.getElementById('healthSummarySub');
-      const liveTimer = document.getElementById('healthLiveTimer');
-      if (!grid) return;
-
-      const timeStr = nowTime();
-      if (liveTimer) {
-        liveTimer.innerText = `● Verified live at ${timeStr} (Auto-refresh 3s)`;
-        liveTimer.style.color = '#10b981';
-      }
-
-      if (sub) {
-        sub.innerText = `● ${h.operational_components || 5} of ${h.total_components || 5} Pipeline Services Operational`;
-        sub.style.color = h.status === 'operational' ? '#10b981' : '#f59e0b';
-      }
-
-      grid.innerHTML = '';
-      (h.components || []).forEach(c => {
-        const isOk = c.is_operational !== false;
-        const card = document.createElement('div');
-        card.className = 'kpi-card';
-        card.style.borderColor = isOk ? 'var(--border-subtle)' : '#dc2626';
-        card.style.background = isOk ? 'var(--bg-card)' : 'rgba(220, 38, 38, 0.06)';
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; gap:8px;">
-            <div>
-              <strong style="color:#ffffff; font-size:0.82rem; display:block;">${escapeHtml(c.name)}</strong>
-              <div style="font-size:0.68rem; color:#64748b; margin-top:2px;">${escapeHtml(c.role)}</div>
-            </div>
-            <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.66rem; font-weight:800; font-family:'JetBrains Mono'; padding:2px 6px; border-radius:4px; background:${isOk ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.15)'}; color:${isOk ? '#10b981' : '#ef4444'}; border:1px solid ${isOk ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.35)'}; white-space:nowrap;">
-              <span style="width:5px; height:5px; border-radius:50%; background:${isOk ? '#10b981' : '#ef4444'}; box-shadow:0 0 6px ${isOk ? '#10b981' : '#ef4444'};"></span>
-              ${escapeHtml((c.status || 'OPERATIONAL').toUpperCase())}
-            </span>
-          </div>
-          <div class="mono" style="font-size:0.70rem; color:${isOk ? '#94a3b8' : '#f87171'}; background:#0e0e14; padding:6px 8px; border-radius:6px; margin-top:4px; border:1px solid #1a1a24; word-break:break-word;">
-            ${escapeHtml(c.metrics)}
-          </div>
-          <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:0.65rem; color:#475569;">
-            <span>Target: ${escapeHtml(c.target || '172.20.10.2:2222')}</span>
-            <span class="mono">Verified: ${timeStr}</span>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    async function fetchHealth() {
-      const grid = document.getElementById('healthComponentsGrid');
-      if (!grid) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/health`);
-        if (res.ok) {
-          const h = await res.json();
-          renderHealthCards(h);
-          return;
-        }
-      } catch (err) {
-        // Fallback for offline preview rendering
-      }
-
-      // Real-time dynamic preview data when viewing offline
-      const mockHealth = {
-        "status": "operational",
-        "total_components": 5,
-        "operational_components": 5,
-        "components": [
-          {
-            "name": "Cowrie SSH Honeypot",
-            "role": "Decoy Service (Port 2222)",
-            "status": "Operational",
-            "is_operational": true,
-            "metrics": "Port 2222 Listening · Socket Armed · Live Decoy Active",
-            "target": "172.20.10.2:2222"
-          },
-          {
-            "name": "Honeypot Audit Log",
-            "role": "Live Event Stream (cowrie.json)",
-            "status": "Operational",
-            "is_operational": true,
-            "metrics": "Path: var/log/cowrie/cowrie.json (Streaming · 24.8 KB)",
-            "target": "var/log/cowrie/cowrie.json"
-          },
-          {
-            "name": "Random Forest Classifier",
-            "role": "Scikit-Learn ML Model (n=100)",
-            "status": "Operational",
-            "is_operational": true,
-            "metrics": "Model Loaded · 100 Trees · Inference Latency ~3.2ms",
-            "target": "ml/random_forest_model.pkl"
-          },
-          {
-            "name": "FastAPI Stream Engine",
-            "role": "REST API & Ingestion Engine",
-            "status": "Operational",
-            "is_operational": true,
-            "metrics": "Port 8000 Active · CORS Enabled · Sub-5ms Telemetry",
-            "target": "0.0.0.0:8000"
-          },
-          {
-            "name": "Host Node Hardware",
-            "role": "Physical Compute Host",
-            "status": "Operational",
-            "is_operational": true,
-            "metrics": "CPU: 14.8% · RAM: 1420MB/3790MB (37.4%) · Temp: 43.6°C",
-            "target": "Ubuntu Server / Raspberry Pi"
-          }
-        ]
-      };
-      renderHealthCards(mockHealth);
-    }
-
-    function nowTime() {
-      return new Date().toTimeString().split(' ')[0];
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '—';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    function openModal(ev) {
-      document.getElementById('modalBody').innerHTML = `
-        <div style="font-size:0.85rem; line-height:1.7;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; background:#181822; padding:12px; border-radius:8px; border:1px solid #22222e;">
-            <div>
-              <span style="color:#64748b; font-size:0.72rem; text-transform:uppercase; font-weight:700;">🎯 Target Honeypot Node:</span><br>
-              <strong class="mono" style="color:#38bdf8; font-size:0.95rem;">${ev.target_endpoint || '172.20.10.2:2222'}</strong>
-            </div>
-            <div>
-              <span style="color:#64748b; font-size:0.72rem; text-transform:uppercase; font-weight:700;">⚡ Attacker Source IP:</span><br>
-              <strong class="mono" style="color:#ef4444; font-size:0.95rem;">${ev.ip}</strong>
-            </div>
-          </div>
-          <div><strong style="color:#94a3b8;">Event ID:</strong> <span class="mono" style="color:#ef4444;">${ev.id}</span> (${ev.eventid})</div>
-          <div><strong style="color:#94a3b8;">Attacker Origin:</strong> ${ev.origin}</div>
-          <div style="margin:10px 0; padding:10px; background:#14141c; border-radius:6px; word-break:break-all;" class="mono">${escapeHtml(ev.command)}</div>
-          <div style="margin:14px 0; padding:12px; background:#181820; border-radius:8px;">
-            <div style="color:#64748b; font-size:0.75rem;">RANDOM FOREST CLASSIFICATION:</div>
-            <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">${ev.prediction}</div>
-            <div style="color:#ef4444; font-weight:700;">ML Confidence: ${ev.confidence}%</div>
-          </div>
-          <pre class="mono" style="background:#09090d; padding:12px; border-radius:6px; font-size:0.72rem; color:#94a3b8; max-height:220px; overflow-y:auto;">${JSON.stringify(ev.raw || ev, null, 2)}</pre>
+<div class="soc-modal-backdrop" id="askAiModal">
+    <div class="soc-modal-content" style="max-width: 680px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="pulsing-red-dot"></span>
+          <h3 style="color:#ffffff; font-size:1.1rem; margin:0; font-weight:800;">Ask Gemini AI Assistant</h3>
         </div>
-      `;
-      document.getElementById('inspectModal').classList.add('open');
-    }
-
-    function closeModal() {
-      document.getElementById('inspectModal').classList.remove('open');
-    }
-
-    // ─── PWA SERVICE WORKER & CHROME INSTALL PROMPT ─────────────────────────
+        <button class="btn-close-modal" onclick="closeAskAiModal()">&times;</button>
+      </div>
+      <div class="ai-chat-box" style="height: 420px; display:flex; flex-direction:column;">
+        <div class="ai-chat-status-bar">
+          <span>FALSEDOOR Threat Intelligence &amp; Cybersecurity Q&amp;A</span>
+          <span style="color:#10b981; font-weight:700;">● Gemini AI Connected</span>
+        </div>
+        <div class="ai-chat-messages" id="modalAiChatMessages" style="flex:1; overflow-y:auto; padding:16px;">
+          <div class="chat-bubble bot">
+            Hello! I am your FALSEDOOR AI Assistant powered by Google Gemini. Ask me any question about honeypots, Cowrie telemetry, attack classification (Brute Force, Command Execution, Malware), or cybersecurity defense strategies!
+          </div>
+        </div>
+        <div class="ai-chat-input-bar" style="margin-top:auto;">
+          <input type="text" id="modalAiChatInput" class="ai-chat-input" placeholder="Ask Gemini AI anything about FALSEDOOR or cybersecurity..." onkeydown="if(event.key==='Enter') askModalAi()" />
+          <button class="btn-download-script" onclick="askModalAi()">Ask AI</button>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:14px;">
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="filter-chip-btn" onclick="askModalAi('What is FALSEDOOR honeypot and how does it detect attacks?')">What is FALSEDOOR?</button>
+          <button class="filter-chip-btn" onclick="askModalAi('Why does FALSEDOOR use a 100-tree Random Forest classifier?')">Why 100 Trees?</button>
+          <button class="filter-chip-btn" onclick="askModalAi('What are the 3 attack classes identified by the honeypot?')">3 Attack Classes</button>
+        </div>
+        <button class="btn-ctrl" onclick="closeAskAiModal()">Close</button>
+      </div>
+    </div>
+  </div>
+<script src="app.js?v=2.3"></script>
+  <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('FALSEDOOR PWA ServiceWorker active:', reg.scope))
-          .catch(err => console.warn('PWA ServiceWorker error:', err));
+        navigator.serviceWorker.register('/sw.js').catch(function() {});
       });
     }
   </script>

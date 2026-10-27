@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # FALSEDOOR: FastAPI Backend Startup Script
-# Raspberry Pi / Ubuntu Server — used when dashboard is on Netlify
+# Raspberry Pi / Ubuntu Server — Cloudflare Tunnel Mode
 # ==============================================================================
 
 set -e
@@ -12,19 +12,15 @@ cd "$DIR"
 FALSEDOOR_ROOT="$(dirname "$DIR")"
 
 echo "======================================================================"
-echo "  FALSEDOOR - FastAPI Backend (Netlify Mode)"
+echo "  FALSEDOOR - FastAPI Backend (Cloudflare Tunnel Mode)"
 echo "======================================================================"
 echo "  Server dir:  $DIR"
 echo "  FALSEDOOR:   $FALSEDOOR_ROOT"
 echo "  Cowrie log:  $FALSEDOOR_ROOT/var/log/cowrie/cowrie.json"
 echo "  ML model:    $FALSEDOOR_ROOT/ml/random_forest_model.pkl"
 echo ""
-echo "  ⚠️  IMPORTANT: Port 8000 must be reachable from the internet"
-echo "     so that falsedoor.netlify.app can call this API."
-echo "     Options:"
-echo "     A) Open port 8000 on your router (port forward to Pi)"
-echo "     B) Use ngrok: ngrok http 8000  (free tunnel)"
-echo "     C) Use a reverse proxy (nginx) with a domain + SSL"
+echo "  ✓ Serving live dashboard and API endpoints on port 8000"
+echo "  ✓ Cloudflare Zero Trust Tunnel exposes port 8000 securely"
 echo "======================================================================"
 
 if ! command -v python3 &> /dev/null; then
@@ -57,9 +53,9 @@ if command -v ufw &> /dev/null; then
 fi
 
 echo "[+] Starting FastAPI server on port 8000 (all interfaces)..."
-echo "[+] Netlify dashboard will connect to: http://$(hostname -I | awk '{print $1}'):8000"
-echo "[+] API Docs:     http://0.0.0.0:8000/docs"
-echo "[+] Health check: http://0.0.0.0:8000/api/health"
+echo "[+] Local dashboard: http://$(hostname -I | awk '{print $1}'):8000"
+echo "[+] API Docs:        http://0.0.0.0:8000/docs"
+echo "[+] Health check:    http://0.0.0.0:8000/api/health"
 echo "----------------------------------------------------------------------"
 echo ""
 

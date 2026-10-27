@@ -55,7 +55,7 @@ df.to_csv(OUTPUT_FILE, index=False)
 
 print("Feature extraction completed!")
 print(f"Total extracted records: {len(df)}")
-print(f"Output file: (OUTPUT_FILE)")
+print(f"Output file: {OUTPUT_FILE}")
 
 if not df.empty:
    print("\nAttack type distribution:")
